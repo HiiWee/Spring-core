@@ -156,12 +156,36 @@
 
 
 
+< --------------------------- 회원 도메인 실행과 테스트 --------------------------- >
+* 간단한 회원 도메인의 인스턴스간 참조 그림은 회원 객체 다이어그램과 동일하게 된다.
+	> 회원 클래스 다이어그램 : 정적인 다이어그램
+	> 회원 객체 다이어그램 : 동적인 다이어그램
 
+* 멤버를 만들어 임의로 ID, 이름, 등급을 부여하고 가입을 시킨다.
+  이후 findMember 변수로 멤버 서비스의 findMember()메소드를 이용해 가입한 객체를 받아오고
+  최종적으로 기존의 member의 이름과, findMember에 저장된 객체의 멤버 이름을 비교하는 로직을 만든다.
 
+public class MemberApp {
+    public static void main(String[] args) {
+        MemberService memberService = new MemberServiceImpl();
+        Member member = new Member(1L, "memberA", Grade.VIP);
 
+        Member findMember = memberService.findMember(1L);
+        System.out.println("new member = " + member.getName());
+        System.out.println("find Member = " + findMember.getName());
+    }
+}
 
+* 하지만 어플리케이션 로직으로 main을 이용한 테스트는 좋은 방법이 아님. --> JUnit test를 이용한다.
+	> 눈으로 출력된 콘솔의 결과를 보는것이 아님
+	> 다른코드를 추가 했을때 오류 나는것도 캐치하기 쉬움
+	> 테스트 작성 방법은 필수 (공부하자)
 
-
+* 회원 도메인은 설계의 문제점이 있다.
+	> 만약 다른 저장소로 변경하고자 한다면 OCP원칙을 준수하지 못함
+	> 또한 DIP는 잘 지키고 있을까?
+	> 즉 의존관계가 인터페이스 뿐만 아니라 구현까지 모두 의존하는 문제점이 있다.
+		> 주문까지 만들고 나서 문제점과 해결 방안을 설명해보자
 
 
 
