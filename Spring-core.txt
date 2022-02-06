@@ -143,6 +143,16 @@
 
 
 
+< --------------------------- 회원 도메인 개발 --------------------------- >
+
+* 등급을 위한 Grade enum 클래스 정의
+* ID, 이름, 등급을 가진 Member 엔티티 정의
+* 멤버를 저장하고, id를 통해 멤버를 찾는 인터페이스 정의 : MemberRepository
+* MemberRepository를 구현하는 구현체인 MemoryMemberRepository를 정의
+* 회원가입, 회원조회 서비스를 가진 서비스 회원 서비스 인터페이스 정의 : MemberService
+* MemberService를 구현하는 구현체인 MemberServiceImpl 정의 : 구현체가 하나만 있을경우 관례상 인터페이스명 뒤에 Impl을 붙임
+
+
 
 
 
