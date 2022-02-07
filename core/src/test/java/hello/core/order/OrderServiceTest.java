@@ -17,7 +17,7 @@ public class OrderServiceTest {
 
     @Test
     void createOrder() {
-        // 프리미티브 타입은 NULL이 입력이 안되므로 wrapper타입 사용
+        // primitive 타입은 NULL이 입력이 안되므로 wrapper타입 사용
         Long memberId = 1L;
         // 멤버 임의 생성 및 등록
         Member member =  new Member(memberId, "memberA", Grade.VIP);
