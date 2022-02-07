@@ -23,7 +23,7 @@ public class OrderServiceImpl implements OrderService {
         Member member = memberRepository.findById(memberId);
 
         // 3. 할인 적용 (할인 정책에서 Member 객체와 상품가격을 넘겨주어 할인가격을 받는다.)
-        // OrderService입장에선 할인에 대한것은 관심이 없음 : 할인 관련은 discountPolicy에게 전적으로 맡김 --> 단일책임원칙 잘 설계됨
+        // OrderService입장에선 할인에 대한것은 관심이 없음 : 할인 관련은 discountPolicy에게 전적으로 맡김 --> 단일 책임 원칙 잘 지켜짐
         int discountPrice = discountPolicy.discount(member, itemPrice);     // Grade를 넘겨도 되지만 Member객체를 넘김 --> 프로젝트 상황따라 유동적으로
         
         // 4. 주문 결과 반환

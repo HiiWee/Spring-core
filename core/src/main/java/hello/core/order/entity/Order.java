@@ -14,7 +14,7 @@ public class Order {
         this.discountPrice = discountPrice;
     }
 
-    // 비즈니스 로직 (계산된 할인가격)
+    // 계산된 할인가격을 구하는 로직
     public int calculatePrice() {
         return itemPrice - discountPrice;
     }

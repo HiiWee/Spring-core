@@ -220,7 +220,7 @@ public class MemberApp {
 
 * 우선 할인 정책 인터페이스를 만들어야 함
 	> 할인정책 인터페이스는 discount 메소드를 가지는데 이는 할인 대상의 할인 금액을 반환한다.
-	> 현재는 정액할인제만 구현체로 두었고 Grade가 VIP일때 1000원 할인된 가격을 반환한다.
+	> 현재는 정액할인정책만 구현체로 두었고 Grade가 VIP일때 1000원 할인된 가격을 반환한다.
 
 * 정책설정까지 완료되었고 Order 객체를 생성하자
 	> Order 객체는 memberId, itemName, itemPrice, discountPrice를 필드로 가진다.

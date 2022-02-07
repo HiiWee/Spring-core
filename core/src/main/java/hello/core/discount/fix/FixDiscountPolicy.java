@@ -6,11 +6,12 @@ import hello.core.member.entity.Member;
 
 public class FixDiscountPolicy implements DiscountPolicy {
 
-    // 무조건 1000원 할인
+    // 1000원만 할인 하므로 따로 필드로 선언해서 이용
     private int discountFixAmount = 1000;
 
     @Override
     public int discount(Member member, int price) {
+        // enum type은 ==을 이용함
         if (member.getGrade() == Grade.VIP) {
             return discountFixAmount;
         } else {
