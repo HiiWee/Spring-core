@@ -7,10 +7,14 @@ import hello.core.member.service.MemberService;
 
 // 구현체가 하나만 있을경우 관례상 인터페이스명 뒤에 Impl을 붙임
 public class MemberServiceImpl implements MemberService {
-    
-    // OCP, DIP 원칙 무시됨 : 자바 코드의 한계(추상화, 구체화 모두 의존하고 있음)
-    // 변경할 때 자바코드가 변경됨
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
+
+    private final MemberRepository memberRepository;
+
+    // DIP 지켜짐 : 인터페이스에만 의존하고 있음 (AppConfig가 객체 생성, 연결 담당함)
+    // OCP 지켜짐 : 다형성 사용하고 클라이언트가 DIP를 지킴, 클라이언트 코드 변경없이 주입 객체 변경가능
+    public MemberServiceImpl(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     @Override
     public void join(Member member) {

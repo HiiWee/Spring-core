@@ -12,14 +12,16 @@ import hello.core.order.service.OrderService;
 public class OrderServiceImpl implements OrderService {
 
     // 2.회원조회를 위한 필드 선언
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
+    private final MemberRepository memberRepository;
     // 3. 할인적용을 위한 필드 선언
-    // private final DiscountPolicy discountPolicy = new FixDiscountPolicy();
-    // 새로운 할인정책 : 정률할인정책 적용
-    // private final DiscountPolicy discountPolicy = new RateDiscountPolicy();
-
-    // 인터페이스만 의존하도록 코드 변경 : 하지만 NullPointException 발생 함
     private DiscountPolicy discountPolicy;
+
+    // DIP 지켜짐 : 인터페이스에만 의존하고 있음 (AppConfig가 객체 생성, 연결 담당함)
+    // OCP 지켜짐 : 다형성 사용하고 클라이언트가 DIP를 지킴, 클라이언트 코드 변경없이 주입 객체 변경가능
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
 
     // 1. 주문생성(회원id, 상품명, 상품가격 인자로 넘겨줌)
     @Override

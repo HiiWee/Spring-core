@@ -350,37 +350,116 @@ public class MemberApp {
 
 
 
+< --------------------------- 관심사의 분리 --------------------------- >
+* 애플리케이션을 로미오와 줄리엣 공연으로 보자
+* 우리는 지금까지 로미오 역할(인터페이스)을 하는 디카프리오(구현체)가
+  줄리엣 역할(인터페이스)을 하는 여자 주인공(구현체)를 직접 초빙하고 있다.
+
+* 즉 디카프리오가 공연과 여자 주인공을 공연에 초빙하는 다양한 책임을 가지게 된다.
+
+* 관심사를 분리하자
+	> 배우는 본인의 역할인 배역 수행에만 집중 해야함
+	> 따라서 디카프리오는 어떤 상대역이와도 똑같이 공연해야함
+	> 공연구성, 담당배우 섭외, 역할 맞는 배우 지정과 같은 책임은 별도의 공연기획자가 담당해야한다.
+	> 따라서 공연 기획자를 만들어서 배우와 기획자의 책임을 분리해야함
+
+* 애플리케이션의 전체 동작 방식을 구성(config)하기 위해, 구현 객체를 생성하고, 연결하는 책임을
+  가지는 별도의 설정 클래스를 만들어야함
+	> 어플리케이션 전반에 대한 운영을 책임진다.
+
+* AppConfig 만들기
+	> 현재 만들어진 서비스들을 생성하고 반환해준다. 다만 생성자 주입을 이용해 서비스 구현체에 필요한 의존성을 주입한다.
+	> 이렇게 AppConfig가 만들어지면 서비스 구현체는 기존에 new를 통해 의존성을 생성하는 코드가 사라지고 오로지 인터페이스에만 의존하게 된다.
+	> 즉 DIP가 성립된다.
+
+<AppConfig>
+        // 애플리케이션 전체를 설정하고 구성함
+        // 구현 객체를 생성하고, 연결하는 책임을 가짐
+        public class AppConfig {
+        
+            // memberService를 만들어보자
+            public MemberService memberService() {
+                return new MemberServiceImpl(new MemoryMemberRepository());
+            }
+        
+            public OrderService orderService() {
+                return new OrderServiceImpl(new MemoryMemberRepository(), new FixDiscountPolicy());
+            }
+        
+        }
+        
+<MemberServiceImpl>
+        public class MemberServiceImpl implements MemberService {
+        
+            private final MemberRepository memberRepository;
+            // AppConfig를 통해 레포지토리의 구현체를 참조하고, 인터페이스에만 의존함
+            // 어떤 레포지토리가 들어올지 모르고, 상관쓰지 않아도 됨
+            public MemberServiceImpl(MemberRepository memberRepository) {
+                this.memberRepository = memberRepository;
+            }
+        
+            @Override
+            public void join(Member member) {
+                memberRepository.save(member);
+            }
+        
+            @Override
+            public Member findMember(Long memberId) {
+                return memberRepository.findById(memberId);
+            }
+        }
+        
 
 
+	> 즉, AppConfig는 애플리케이션의 실제 동작에 필요한 구현 객체를 생성함
+	> 또한, AppConfig는 생성한 객체 인스턴스의 참조(레퍼런스)를 생성자를 통해서 주입(연결)해준다.
+	  (OrderServiceImpl도 동일하게 설계)
+
+* 결국 설계 변경을 통해 MemberServiceImpl은 MemoryMemberRepository를 의존하지 않는다.
+  (OrderServiceImpl은 MemoryMemberRepository, FixDiscountPolicy를 의존하지 않음)
+
+	> 단지 MemberRepository 인터페이스만 의존한다.
+	> 또한 서비스 구현체 입장에서 생성자를 통해 어떤 구현 객체가 들어오는지(주입)는 알 수 없다.
+	> 생성자를 통해 어떤 구현 객체를 주입될지는 오직 외부(AppConfig)에서 결정된다.
+	> 서비스 구현체들은 이제부터 의존관계에 대한 고민은 외부에 맡기고 실행에만 집중할 수 있다.(관심사 밖)
+
+* AppConfig가 객체의 생성과 연결을 담당하게 됨
+	> DIP 완성 : MemberServiceImpl은 MemberRepository인 추상에만 의존, 구체 클래스 몰라도됨.
+	> 관심사의 분리 : 객체를 생성하고 연결하는 역할과 실행하는 역할이 명확히 분리됨.
+
+* 세부적으로 AppConfig는 MemoryMemberRepository객체를 생성하고 그 참조값을 MemberServiceImpl 객체를 생성하면서 생성자로 전달함
+	> 클라이언트(MemberServiceImpl)입장에서 의존관계를 마치 외부에서 주입하는것 같음
+	> 우리는 이를 DI(Dependency Injection) 의존관계, 의존성 주입이라고 말함
+
+* OrderServiceImpl도 동일하다 다만 DiscountPolicy 구현체를 하나 더 생성하는것의 차이만 있고 나머지는 동일
 
 
+* MeberApp 수정 : 기존에 묵시적 기본생성자를 사용하던 코드들에서 오류가 나므로 수정을 요함
+	> 직접적으로 new를 이용해 MemberServiceImpl객체를 생성하고 MemberServiceImpl에서 MemoryMemberRepository를 생성함
+	  (순차적으로 생성되는 모양)
+	  하지만 이제는 AppConfig.memberService()메소드를 이용해 MemberServiceImpl객체를 MemberService인터페이스 형식으로 받아온다.
+	  (이 방법은 AppConfig에서 순차적 생성이 아닌 전부 결정해준다.)
 
+	> 나머지 로직은 동일함
 
+* OrderApp 수정 : 이 또한 위와 동일하게 묵시적 생성자를 사용하던 코드에서 오류가 발생
+	> MemberService, OrderService의 구현체들을 AppConfig를 이용해 생성하고 주입 받는다.
+	> AppConfig에선 어떤 저장소, 할인정책을 할지 완성시켜놓고 한번에 서비스객체로 주입해준다.
 
+* 기존 테스트 코드도 수정 요함 : 기본생성자의 사용으로 인해 오류 발생 
+	> AppConfig를 이용해 테스트 동작 전에 서비스 객체를 참조시켜야함
+	> 따라서 @BeforeEach를 이용 : 이는 테스트가 실행되기전에 무조건 실행되며 이를 통해 서비스 객체를 할당하고 이후 테스트가 실행됨
+		> 여기서는 AppConfig를 이용해 의존성 주입 및 서비스 객체를 필드에 대입한다.
 
+* 모든 관심사를 분리 : DIP를 지켜줌
+	> AppConfig를 통해서 관심사를 확실하게 분리했다.
+	> AppConfig는 공연 기획자다.
+	> AppConfig는 구체 클래스를 선택한다. 배역에 맞는 담당 배우를 선택한다. 애플리케이션이 어떻게
+	  동작해야 할지 전체 구성을 책임진다.
+	> 이제 각 배우들은 담당 기능을 실행하는 책임만 지면 된다.
+	> OrderServiceImpl 은 기능을 실행하는 책임만 지면 된다. : 개발할때도 인터페이스만 보고 개발하면 됨(구체클래스가 어떨지 고민X)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+* 다음 시간에는 AppConfig의 문제점과 더 나은 방향으로의 리팩터링을 배워보자
 
 
 

@@ -10,8 +10,10 @@ import hello.core.order.service.impl.OrderServiceImpl;
 
 public class OrderApp {
     public static void main(String[] args) {
-        MemberService memberService = new MemberServiceImpl();
-        OrderService orderService = new OrderServiceImpl();
+        AppConfig appConfig = new AppConfig();
+        // AppConfig를 이용해 어떤 저장소, 할인정책을 사용할지 결정된 서비스 객체를 주입받음
+        MemberService memberService = appConfig.memberService();
+        OrderService orderService = appConfig.orderService();
 
         // 임의로 멤버를 생성하고 가입시켜놓음
         Long memberId = 1L;
