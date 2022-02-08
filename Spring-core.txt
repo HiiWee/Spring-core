@@ -325,9 +325,26 @@ public class MemberApp {
 
 
 
+< --------------------------- 새로운 할인 정책 적용과 문제점 --------------------------- >
+* 새로운 할인정책을 적용하기 위해 OrderServiceImpl의 코드를 수정한다.
+	> private final DiscountPolicy discountPolicy = new RateDiscountPolicy();		// 새로운 할인정책 : 정률할인정책 적용
 
+<문제점>
+* 할인정책을 변경하려면 클라이언트인 OrederServiceImpl의 코드를 고쳐야한다.
+	> 역할과 구현 충실히 분리 O
+	> 다형성 활용, 인터페이스와 구현 객체 분리 O
+	> OCP, DIP 같은 객체지향 설계 원칙을 준수? X
+		> DIP :  OrderServiceImple은 DiscountPolicy인터페이스만 의존하는것이 아니라 구현체인 Fix, RateDiscountPolicy도 동시에 의존함
+		  따라서 DIP를 위반함
+	
+		> OCP : 변경하지 않고 확장할 수 있을것 같지만 기능을 확장해서 변경하려면 클라이언트(OrderServiceImpl)의 코드에 직접적으로 영향을준다
+		  따라서 OCP를 위반함
 
+* 이것을 해결하기 위해 인터페이스에만 의존하도록 설계하면
+	> private DiscountPolicy discounPolicy; (final은 객체를 생성해야 작성가능)
+	> 위와 같이 작성하면 인터페이스만 의존하지만 NullPointException이 발생한다.
 
+* 결국 이것을 해결하기 위해선 누군가가 클라이언트(OrderServiceImpl)에 DiscountPolicy의 구현 객체를 대신 생성하고 주입해야함
 
 
 

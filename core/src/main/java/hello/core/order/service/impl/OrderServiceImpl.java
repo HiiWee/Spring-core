@@ -2,6 +2,7 @@ package hello.core.order.service.impl;
 
 import hello.core.discount.DiscountPolicy;
 import hello.core.discount.fix.FixDiscountPolicy;
+import hello.core.discount.rate.RateDiscountPolicy;
 import hello.core.member.entity.Member;
 import hello.core.member.repository.MemberRepository;
 import hello.core.member.repository.memory.MemoryMemberRepository;
@@ -13,8 +14,12 @@ public class OrderServiceImpl implements OrderService {
     // 2.회원조회를 위한 필드 선언
     private final MemberRepository memberRepository = new MemoryMemberRepository();
     // 3. 할인적용을 위한 필드 선언
-    private final DiscountPolicy discountPolicy = new FixDiscountPolicy();
+    // private final DiscountPolicy discountPolicy = new FixDiscountPolicy();
+    // 새로운 할인정책 : 정률할인정책 적용
+    // private final DiscountPolicy discountPolicy = new RateDiscountPolicy();
 
+    // 인터페이스만 의존하도록 코드 변경 : 하지만 NullPointException 발생 함
+    private DiscountPolicy discountPolicy;
 
     // 1. 주문생성(회원id, 상품명, 상품가격 인자로 넘겨줌)
     @Override
@@ -25,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
         // 3. 할인 적용 (할인 정책에서 Member 객체와 상품가격을 넘겨주어 할인가격을 받는다.)
         // OrderService입장에선 할인에 대한것은 관심이 없음 : 할인 관련은 discountPolicy에게 전적으로 맡김 --> 단일 책임 원칙 잘 지켜짐
         int discountPrice = discountPolicy.discount(member, itemPrice);     // Grade를 넘겨도 되지만 Member객체를 넘김 --> 프로젝트 상황따라 유동적으로
-        
+
         // 4. 주문 결과 반환
         return new Order(memberId, itemName, itemPrice, discountPrice);
     }
