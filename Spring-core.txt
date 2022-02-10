@@ -465,9 +465,44 @@ public class MemberApp {
 
 
 
+< --------------------------- AppConfig 리팩터링 --------------------------- >
+* 현재 AppConfig를 보면 "중복"이 있고, "역할"에 따른 "구현"이 잘 안보인다. : 설정(구성)정보에선 이렇게 한눈에 보이는것이 중요하다.
+* 따라서 아래와 같이 변경함
+public class AppConfig {
+        
+            // 멤버 서비스 역할
+            public MemberService memberService() {
+                return new MemberServiceImpl(memberRepository());
+            }
+        
+            // 저장소 역할 : 저장소 변경시 아래 코드만 변경하면 된다.
+            private MemberRepository memberRepository() {
+                return new MemoryMemberRepository();
+            }
+        
+            // 주문 서비스 역할
+            public OrderService orderService() {
+                return new OrderServiceImpl(memberRepository(), discountPolicy());
+            }
+        
+            // 할인 정책 역할 : 정책 변경시 아래 코드만 변경하면 됨
+            public DiscountPolicy discountPolicy() {
+                return new FixDiscountPolicy();
+            }
+        
+        }
+
+* 위 방식의 큰 장점은 각 메소드 명을 통해 역할이 전부 드러나고, 각 서비스에 대한 구현과 주입되는 저장소, 정책은 다른 메소드가 담당하므로
+  변경 시 정책, 저장소 코드만 변경하면 됨
+	> 이렇게 해서 설계에 대한 그림이 구성정보에 그대로 드러남 (역할이 나오고, 역할에 대한 구현이 한눈에 들어옴)
+
+* 이렇게 하게 되면 후에 new MemoryMemberRepository() 이 부분이 중복 제거되었다. 이제 MemoryMemberRepository 를
+  다른 구현체로 변경할 때 한 부분만 변경하면 된다. DiscountPolicy도 변경되었을때 한 부분만 변경하면 된다.
+
+* 즉 AppConfig를보면 역할과 구현클래스가 한눈에 들어오며, 애플리케이션 전체 구성이 어떻게 되어있는지 빠르게 파악할 수 있다.
 
 
-
+* 다음 시간에 정액할인정책을 정률할인정책으로 변경해보자
 
 
 
