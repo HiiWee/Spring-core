@@ -508,10 +508,23 @@ public class AppConfig {
 
 
 
+< --------------------------- 새로운 구조와 할인 정책 적용 --------------------------- >
+* 이전시간에 만든 새로운 구조에서 새로운 할인 정책을 적용해보자 (RateDiscountPolicy)
+* AppConfig 구조가 등장하면서 AppConfig만 변경하면 된다.
+	> AppConfig의 등장으로 애플리케이션이 크게 사용 영역과, 객체를 생성하고 구성(Configuration)하는 영역으로 분리됨
 
+* 따라서 할인정책을 변경하게되면 AppConfig즉 구성영역의 코드만 변경되고, 사용영역의 코드는 전혀 변경될 필요가 없다.
+	> FixDiscountPolicy -> RateDiscountPolicy 변경시 구성영역만 영향받고, 사용 영역 영향 X
+	> 이제 할인 정책을 변경해도, 애플리케이션의 구성 역할을 담당하는 AppConfig만 변경하면 된다. 
+	  클라이언트 코드인 OrderServiceImpl 를 포함해서 사용 영역의 어떤 코드도 변경할 필요가 없다
+	> 만약 AppConfig를 xml로 작성하면 정말 자바코드 변경없이 사용할 수 있다.
 
+* 이렇게 되면서 DIP, OCP가 지켜졌다. FixDiscount -> RateDiscount 변경 시
+	> OrderServiceImpl에서 클라이언트 코드는 추상화에 의존하고 있다. : DIP
+	> 정책을 확장했지만 구성영역만 코드가 변경하면 되고 클라이언트 코드는 손댈 필요가 없다.
+	  따라서 확장에는 열려있지만 변경에는 닫혀있다. : OCP
 
-
+* 다음시간에는 지금까지 배운것을 정리해보자
 
 
 

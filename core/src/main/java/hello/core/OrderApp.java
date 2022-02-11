@@ -21,7 +21,7 @@ public class OrderApp {
         memberService.join(member);
 
         // itemA, 10000원 짜리 상품을 주문을 생성함
-        Order order = orderService.createOrder(memberId, "itemA", 10000);
+        Order order = orderService.createOrder(memberId, "itemA", 20000);
 
         // 생성하고 결과를 보면 1000원의 할인정책이 적용된것을 볼 수있다.
         System.out.println("order = " + order);
