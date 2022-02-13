@@ -7,13 +7,21 @@ import hello.core.member.service.impl.MemberServiceImpl;
 import hello.core.order.entity.Order;
 import hello.core.order.service.OrderService;
 import hello.core.order.service.impl.OrderServiceImpl;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class OrderApp {
     public static void main(String[] args) {
-        AppConfig appConfig = new AppConfig();
+//        AppConfig appConfig = new AppConfig();
         // AppConfig를 이용해 어떤 저장소, 할인정책을 사용할지 결정된 서비스 객체를 주입받음
-        MemberService memberService = appConfig.memberService();
-        OrderService orderService = appConfig.orderService();
+//        MemberService memberService = appConfig.memberService();
+//        OrderService orderService = appConfig.orderService();
+
+        // AppConfig 버전에서 Spring을 사용하는 버전으로 변경하기
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        MemberService memberService = applicationContext.getBean("memberService", MemberService.class);
+        OrderService orderService = applicationContext.getBean("orderService", OrderService.class);
 
         // 임의로 멤버를 생성하고 가입시켜놓음
         Long memberId = 1L;

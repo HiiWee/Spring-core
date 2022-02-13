@@ -653,8 +653,53 @@ public class AppConfig {
 
 
 
+< --------------------------- 스프링으로 전환하기 --------------------------- >
+* 지금까지의 순수한 자바 코드로 진행한 DI를 스프링으로 전환하자
+
+* 애플리케이션의 설정정보는 AppConfig에 두었고 Spring은 이런 설정정보 파일에 @Configuration을 적게 되어있다.
+* AppConfig 각 메소드에 @Bean을 적어주면 Spring 컨테이너에 등록된다.
+
+* MemberApp에서 ApplicationContext<interface>을 이용한다.
+	> 스프링은 모든것이 ApplicationContext로 시작한다 이것을 곧 스프링 컨테이너로 봐도 됨
+	> new AnnotationConfigApplicationContext(AppConfig.class);를 이용
+		> AppConfig에 있는 annotation기반 환경 설정정보를 가지고 스프링이 @Bean이 붙은것들을 스프링 컨테이너에 객체생성한것을 넣고 관리해준다.
+
+* 따라서 객체를 찾아올때는 AppConfig에서 직접 찾아오는것이 아닌 스프링 컨테이너를 통해서 찾아옴
+	> applicationContext.getBean("memberService", MemberService.class);
+		> 인자의 첫번째는 이름을 줌(이름은 AppConfig의 메소드의 이름이 디폴트로 등록됨), 두번째 인자는 타입을 정하며 이를 지정해야 반환타입이 맞아짐
+		> memberService로 받아오고 실행함
+
+* 실행하게 되면 Creating shared instance of singleton bean으로 @Bean으로 작성한 메소드들이 스프링 컨테이너에 등록이 되었다는 로그가 나타나며 실행된다.
+	(AppConfig도 appConfig로 등록됨)
+	> key는 메소드명, value는 객체 인스턴스들로 스프링컨테이너에 등록, 등록된 빈을 꺼낼때는 이름이나 타입을 주고 꺼냄 나머지는 기존코드와 동일
+
+	> OrderApp도 동일
+
+[정리]
+* ApplicationContext를 스프링 컨테이너라 한다.
+
+* 기존에는 개발자가 AppConfig를 이용해 직접 객체 생성, DI했지만 이제부터는 스프링 컨테이너를 통해서 사용한다.
+
+* 스프링 컨테이너는 @Configuration이 붙은 AppConfig를 설정(구성)정보로 사용한다. 여기서 @Bean이라 적힌 메소드를 모두 호출해서
+  반환된 객체를 스프링 컨테이너에 등록한다. 이렇게 스프링 컨테이너에 등록된 객체를 스프링 빈이라 한다.
+
+* 스프링 빈은 @Bean이 붙은 메소드의 명을 스프링 빈의 이름으로 사용함. (@Bean(name="")으로 변경도 가능하지만 관례(default)를 따르는것이 바람직
+
+* 이전에는 개발자가 필요한 객체를 AppConfig를 사용해 직접 조회 했지만, 이제부터는 스프링 컨테이너를 통해서 필요한 스프링 빈(객체)을 찾아야 한다.
+  스프링 빈은 applicationContext.getBean() 메소드를 사용해서 찾을 수 있다.
+
+* 기존에는 개발자가 직접 자바코드로 모든 것을 했다면 이제부터는 스프링 컨테이너에 객체를 스프링 빈으로 등록하고,
+  스프링 컨테이너에서 스프링 빈을 찾아서 사용하도록 변경되었다.
 
 
+* 의문 : 코드가 복잡해진것 같은데, 스프링 컨테이너를 사용하면 어떤 장점이 있을까? 천천히 알아보자
+
+
+* 스프링 컨테이너가 해줄 수 있는것은 어마어마하게 많음
+	> DIP, OCP, 다형성등을 버무려서 왜 Spring Container가 나오게 되었는지 알아봤다.
+	> AppConfig 같은것을 개발자가 직접 만드는것이 아니라 스프링 컨테이너를 이용해 어떤 프로젝트에도 DI나 등등을 스프링이 편하게 해주도록 하는 범용 프레임웍이 생김
+	> 지금까지는 객체지향원리와 다형성만 가지고는 안되는구나를 알고, DIP, OCP를 지키기위한 설정이 필요한것을 직접 해본것이고 (AppConfig)
+	> 해본 이것 즉, 기존의 AppConfig보다 스프링 컨테이너가 더 낫다하는데, 뭐가 더 나을지를 설명할것임
 
 
 
