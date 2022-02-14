@@ -761,6 +761,36 @@ public class AppConfig {
 
 
 
+< --------------------------- 컨테이너에 등록된 모든 빈 조회 --------------------------- >
+* 컨테이너에 등록한 빈들이 제대로 등록되었는지 확인(조회) 해보자
+
+* 모든 빈 조회 : String [] beanDefinitionNames = ac.getBeanDefinitionNames();를 기반으로 조회할 수 있다. (for Each)
+	> 배열 타입에서 beanDeifinitionName으로 값을 하나씩 꺼내어 담고
+	> Object bean = ac.getBean(beanDefinitionName);으로 빈을 꺼낸다. 따로 타입을 지정하지 않아 오브젝트로 반환됨
+
+* 위와 같은 방법으로 조회하면 스프링이 내부작업에 사용되는 빈들도 같이 출력되므로 애플리케이션 빈만 출력해보자
+	> BeanDefinition beanDefinition = ac.getBeanDefinition(beanDefinitionName);으로 빈의 메타데이터 정보를 받아와서
+	> beanDefinition.getRole() == BeanDefinition.ROLE_APPLICATION인 경우만 출력하게 한다.
+	> 여기서 ROLE_APPLICATION은 직접 등록한 애플리케이션 빈을 뜻하는 상수고, ROLE_INFRASTRUCTURE는 스프링이 내부에서 사용하는 빈을 뜻하는 상수다.
+
+
+[정리]
+* 모든 빈 출력하기
+	> 실행하면 스프링에 등록된 모든 빈 정보를 출력
+	> ac.getDefinitionNames() : 스프링에 등록된 모든 빈 이름을 조회한다.
+	> ac.getBean() : 빈 이름으로 빈 객체(인스턴스)를 조회.
+
+* 애플리케이션 빈 출력하기
+	> 스프링이 내부에서 사용하는 빈 제외, 내가 등록한 빈만 출력
+	> 스프링이 내부에서 사용하는 빈은 getRole()로 구분 가능
+		> ROLE_APPLICATION : 일반적으로 사용자가 정의한 빈
+		> ROLE_INFRASTRUCTURE : 스프링이 내부에서 사용하는 빈
+
+
+* 지금까지의 방법은 모든 빈을 조회하기 위한 방법이고 다음 시간에는 스프링 빈을 조회하는 가장 기본적인 방법을 알아보자
+
+
+
 
 
 
