@@ -36,9 +36,10 @@ class SingletonTest {
     @Test
     @DisplayName("스프링 컨테이너와 싱글톤")
     void springContainer() {
-        // pure
+        // pure container
         // AppConfig appConfig = new AppConfig();
-        // spring
+
+        // spring container
         AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
 
         // 1. 조회: 호출 할 때마다 같은 객체 반환
