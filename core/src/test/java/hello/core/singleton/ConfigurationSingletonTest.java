@@ -43,4 +43,14 @@ public class ConfigurationSingletonTest {
          *
          * */
     }
+
+    @Test
+    void configurationDeep() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        // AnnotationConfigApplicationContext를 통해 AppConfig.class를 넘기면 설정 클래스도 스프링 빈으로 등록된다.
+        AppConfig bean = ac.getBean(AppConfig.class);
+
+        System.out.println("bean = " + bean.getClass());
+    }
 }

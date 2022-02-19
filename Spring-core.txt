@@ -1148,6 +1148,56 @@ static 클래스로 TestConfig생성 : Rate, FixDiscountPolicy로 빈 생성
 
 
 
+< --------------------------- @Configuration과 바이트코드 조작의 마법 --------------------------- >
+* 스프링 컨테이너는 싱글톤 레지스트리다. (스프링이 직접  싱글턴 객체를 만들고 관리하는 기능을 제공하는 것을 의미한다.)
+* 따라서 스프링 빈이 싱글톤이 되도록 보장해주어야 함.
+* 하지만 스프링이 자바 코드까지 어떻게 하기는 어려움 --> 자바 코드를 보면 분명 3번 호출되어야 하는 것이 맞다.
+* 따라서 스프링은 클래스의 바이트코드를 조작하는 라이브러리를 사용
+* 모든 비밀은 @Configuration을 적용한 AppConfig에 있다.
+
+* ConfigurationDeep Test
+	> AppConfig또한 AnnotationConfigApplicationContext에 파라미터로 넘긴 값이므로 스프링 빈으로 등록된다.
+	> AppConfig를 getBean해 bean.getClass()로 클래스정보를 출력하면 class hello.core.AppConfig$$EnhancerBySpringCGLIB$$bd479d70 형태로 출력된다.
+	> class hello.core.AppConfig 예상 출력은 다음과 같다. 하지만, xxxCGLIB가 붙으며 복잡해진 클래스 정보가 출력된다.
+	> 이는 CGLIB라는 바이트코드 조작 라이브러리를 이용해 AppConfig를 상속받은 임의의 클래스를 스프링 빈으로 등록했기 때문
+	
+	> 임의의 다른 클래스가 아래와같이 CGLIB의 기술로 싱글톤이 보장되도록 해준다.
+
+	@Bean
+	public MemberRepository memberRepository() {
+ 
+	  if (memoryMemberRepository가 이미 스프링 컨테이너에 등록되어 있으면?) {
+	  	return 스프링 컨테이너에서 찾아서 반환;
+	  } else { //스프링 컨테이너에 없으면 
+		기존 로직을 호출해서 MemoryMemberRepository를 생성하고 스프링 컨테이너에 등록 return 반환
+	  }
+	}
+
+	> 즉 @Bean이 붙은 메소드마다 스프링 빈이 이미 존재하면 존재하는 빈을 반환, 없으면 생성해서 스프링 빈으로 등록하고 반환한다.
+	> 이 덕분에 싱글톤이 보장된다.
+
+	> 참고로 AppConfig@CGLIB는 AppConfig의 자식 타입이므로 AppConfig타입으로 조회할 수 있다.
+
+
+* @Configuration없이 @Bean만 적용하면?
+	> 출력 결과를 통해서 AppConfig가 CGLIB 기술 없이 순수한 AppConfig로 스프링 빈에 등록된 것을 인할 수 있다.
+	> 또한 MemberRepository가 초기 예상대로 총 3번 호출된다.
+	> 인스턴스도 각각 다른 MemoryMemberRepository 인스턴스를 가지므로 싱글톤이 지켜지지 않는다.
+	  (왜냐하면 각각 실행되는 memberRepository()는 일반적인 new로 객체가 생성되는것과 동일하므로 스프링 컨테이너에 등록되지 않기 때문이다.)
+	  (따라서 각 Service에 주입된 저장소들은 스프링 빈이 아니라 직접 new하여 구현체를 의존하는것과 동일한 상황이 된다.)
+
+	  (만약 @Configuration을 없이 사용하고 싶다면 @Autowired를 사용하면 됨)
+
+
+[ 정리 ]
+* @Bean만 사용해도 스프링 빈으로 등록되지만, 싱글톤을 보장하지 않는다.
+	> memberRepository()처럼 의존관계 주입이 필요해서 메소드를 직접 호출할 때 싱글톤을 보장하지 않는다.
+* 스프링 설정 정보는 항상 @Configuration을 사용하자.
+
+
+
+
+
 
 
 
