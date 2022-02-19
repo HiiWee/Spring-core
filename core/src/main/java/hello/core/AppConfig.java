@@ -18,22 +18,38 @@ import org.springframework.context.annotation.Configuration;
 // 구현클래스도 한눈에 들어옴
 @Configuration
 public class AppConfig {
+
+    
+    // 호출순서 예상
+    // memberService 빈 생성 시
+        // 1. call AppConfig.memberService
+        // 2. call AppConfig.memberRepository
+
+    // memberRepository빈 생성 시
+        // 1. call AppConfig.memberRepository
+    
+    // orderService 빈 생성 시
+        // 1. call AppConfig.orderService
+        // 2. call AppConfig.memberRepository
     
     // 멤버 서비스 역할
     @Bean
     public MemberService memberService() {
+        System.out.println("call AppConfig.memberService");
         return new MemberServiceImpl(memberRepository());
     }
 
     // 저장소 역할 : 저장소 변경시 아래 코드만 변경하면 된다.
     @Bean
     public MemberRepository memberRepository() {
+        System.out.println("call AppConfig.memberRepository");
         return new MemoryMemberRepository();
     }
 
     // 주문 서비스 역할
     @Bean
     public OrderService orderService() {
+        System.out.println("call AppConfig.orderService");
         return new OrderServiceImpl(memberRepository(), discountPolicy());
     }
 

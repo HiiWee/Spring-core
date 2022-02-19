@@ -36,4 +36,9 @@ public class OrderServiceImpl implements OrderService {
         // 4. 주문 결과 반환
         return new Order(memberId, itemName, itemPrice, discountPrice);
     }
+
+    // 테스트 용도 : 싱글톤 유지 확인을 위한 getter 생성
+    public MemberRepository getMemberRepository() {
+        return memberRepository;
+    }
 }
