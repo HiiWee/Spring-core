@@ -8,7 +8,10 @@ import hello.core.member.repository.MemberRepository;
 import hello.core.member.repository.memory.MemoryMemberRepository;
 import hello.core.order.entity.Order;
 import hello.core.order.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OrderServiceImpl implements OrderService {
 
     // 2.회원조회를 위한 필드 선언
@@ -18,6 +21,7 @@ public class OrderServiceImpl implements OrderService {
 
     // DIP 지켜짐 : 인터페이스에만 의존하고 있음 (AppConfig가 객체 생성, 연결 담당함)
     // OCP 지켜짐 : 다형성 사용하고 클라이언트가 DIP를 지킴, 클라이언트 코드 변경없이 주입 객체 변경가능
+    @Autowired  // 자동으로 의존성을 주입함
     public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
