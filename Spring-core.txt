@@ -1241,17 +1241,85 @@ static 클래스로 TestConfig생성 : Rate, FixDiscountPolicy로 빈 생성
 
 
 
+< --------------------------- 탐색 위치와 기본 스캔 대상 --------------------------- >
+* 모든 자바 클래스를 컴포넌트 스캔하면 시간이 오래걸리므로 필요한 위치부터 탐색하게 설정할 수 있다.
+	> @Component(이곳에 설정)
+	> basePackages : 탐색할 패키지의 시작위치 결정, 이 패키지를 포함해 하위 패키지 모두 탐색 {"",""}로 여러 시작위치를 정할 수 있다.
+	> basePackageClasses : 지정한 클래스의 패키지를 탐색 시작 위치로 지정
+	> 만약 지정하지 않으면 @ComponentScan이 붙은 설정 정보 클래스의 패키지가 시작 위치가 된다.
 
 
+* 영한님이 권장하는 방법
+	> 패키지 위치를 지정하지 안는 방법 : 설정 정보 클래스의 위치를 프로젝트 최상단에 둔다(스프링 부트도 이 방법을 기본으로 제공한다)
+		> com.hello, com.hello.service, com.hello.repository와 같이 프로젝트 구조가 있으면 com.hello가 프로젝트 루트이므로, 이곳에 설정 정보를 둔다
+		> 이후 @ComponentScan을 달고 패키지 지정을 생략하면 이곳부터 하위 패키지까지 탐색함
+
+	> 또한 프로젝트 메인 설정 정보는 프로젝트를 대표하는 정보이므로 시작 루트에 위치하는것이 바람직하다.
+	> 부트 사용시 Spring Boot의 대표 시작 정보인 @SpringBootApplication을 프로젝트 시작 루트 위치에 두는것이 관례(그리고 설정 안에 바로 @ComponentScan이 들어있다.)
 
 
+* 컴포넌트 스캔 기본 대상
+	> 컴포넌트 스캔은 @Component뿐 아니라 아래의 내용도 추가로 대상에 포함
+	
+	> @Component 컴포넌트 스캔에서 사용
+	> @Controller 스프링 MVC 컨트롤러에서 사용
+	> @Service 스프링 비즈니스 로직에서 사용
+	> @Repository 스프링 데이터 접근 계층에서 사용
+	> @Configuration 스프링 설정 정보에서 사용
+	(해당 클래스들의 설정 정보를 보면 @Component를 포함하고 있다)
+
+	[참고] : 사실 어노테이션에는 상속관계가 없다. 따라서 어노테이션이 특정 어노테이션을 들고 있는 것을 인식할 수 있는것은
+		 자바 언어가 지원하는 기능이 아닌, 스프링이 지원하는 기능이다.
 
 
+* 컴포넌트 스캔의 용도 뿐 아니라 다음 어노테이션이 있으면 스프링은 부가 기능을 수행한다.
+	> @Controller 스프링 MVC 컨트롤러로 인식
+	> @Repository 스프링 데이터 접근 계층으로 인식, 데이터 계층의 예외를 스프링 예외로 변환
+		(데이터 계층의 예외를 스프링의 추상화된 예외로 변경해줌 : 특정DB의 예외가 터지면 서비스 계층까지 올라옴 --> DB를 변경하면 예외 자체가 변경됨
+		--> Repository계층의 A디비에서 B디비로 변경되어 다른 예외가 올라오면 서비스 계층, 다른계층의 코드가 흔들림 --> 방지위해 스프링이 예외를 추상화해 반환함)
+
+	> @Configuration 스프링 설정 정보로 인식하고, 스프링 빈이 싱글톤을 유지하도록 추가 처리한다.
+	> @Service 특별한 처리를 하지 않음, 대신 개발자들이 핵심 비즈니스 로직이 여기에 있다는 비즈니스 계층을 인식하는데 도움이 된다.
+
+	[참고] : useDefaultFilters 옵션은 기본으로 켜져있는데, 옵션을 끄면 기본 스캔 대상들이 제외된다.
 
 
+* 헷갈릴 만한 사항 정리
+	> ApplicationContext가 바로 스프링 자체, ApplicationContext를 이용해 특정 클래스 정보를 받아야 @ComponentScan이 가능해짐
+	  @ComponentScan의 결과로 스프링빈을 스프링 컨테이너에 등록해야하는데, ApplicationContext가 없으면 등록할 스프링 컨테이너 자체가 존재하지 않아짐
+	  쉽게 이야기해 ApplicationContext가 본인의 스프링 컨테이너에 등록할 빈을 찾기위해 @ComponentScan을 실행한다고 이해하면 된다.
+
+	> 현재 core 프로젝트에 스프링 부트의 어플리케이션인 CoreApplication 내부에 @SpringBootApplication이 프로젝트에 미치는 영향은 없을까?
+		> 단순히 코드만 존재하고 사용하지 않아옴, CoreApplication을 동작하기 위해선 해당 클래스의 main()을 호출하거나 또는 테스트에서 @SpringBootTest를 이용해
+		부트와 통합하는 테스트를 진행해야 함
+		> CoreApplication을 사용하면 부트가 내부에서 생성하는 ApplicationContext를 사용한다. 우리는 직접 스프링 코어인 ApplicationContext를 생성해 사용했으므로
+		  영향을 받는 부분은 없다.
+
+	> exclude로 제외한 @Configuration이 있다. AutoAppconfig또한 마찬가지로 @Configuration 붙어있는데 exclude 안당하고 어떻게 돌아갈까?
+		> new Annotation....(AutoAppConfig.class);에 넣어주기 때문
+
+	> @SpringBootAnnotation은 @ComponentScan이 내부 코드에 들어가 있으므로 최상단에 위치해야함 그렇다면 CoreApplication은 어떻게 빈 등록이 될까?
+		내부에 run메소드로 CoreApplication.class를 넘겨주는데 부트가 이를가지고 자동으로 해당 클래스를 빈으로 등록
 
 
+* Spring core vs Spring Boot 사용
+	[Spring core]
+	> new AnnotationConfigApplicationContext(AutoAppConfig.class);
+		1. ApplicationContext(스프링 컨테이너) 생성
+		2. AutoAppConfig를 스프링 빈으로 등록
+		3. AutoAppConfig에 @ComponentScan을 찾고 @Component(@Controller, @Repository, @Service, @Configuration 포함)이 붙은 클래스를 스프링 컨테이너 빈으로 등록
 
+
+	[Spring Boot]
+	상황 1-1. @SpringBotApplication이 붙어있는 class의 메인함수에서 실행
+	상황 1-2. @SpringBootTest 테스트 실행 -> @SpringBootApplication 어노테이션을 찾아감
+
+	2. 스프링부트 내부에서 자동으로 ApplicationContext(스프링 컨테이너)를 생성
+
+	3. @SpringBootApplication에는 @ComponentScan이 포함되어 있음.
+		-> @Component(및 다른 스캔되는 어노테이션)이 달려있는 클래스를 스프링 컨테이너 빈으로 등록
+		(@Configuration도 @Component가 내부적으로 포함되어 있으므로 달려있는 설정 클래스도 빈으로 컨테이너에 등록
+		 이 때 만약 @Bean이 있으면 이 또한 컨테이너에 빈으로 등록된다.)
 
 
 
