@@ -1,13 +1,13 @@
 ### < --------------------------- 좋은 객체 지향 프로그래밍이란? --------------------------- >
 * #### 다형성의 본질
-  > * 인터페이스를 구현한 객체 인스턴스를 실행 시점에 유연하게 변경할 수 있다.   
-  > * 다형성의 본질을 이해하려면 협력이라는 객체사이의 관계에서 시작해야함   
-  > * 클라이언트를 변경하지 않고, 서버의 구현 기능을 유연하게 변경할 수 있다. --> 가장 큰 본질   
+  > * 인터페이스를 구현한 객체 인스턴스를 실행 시점에 유연하게 변경할 수 있다.
+  > * 다형성의 본질을 이해하려면 협력이라는 객체사이의 관계에서 시작해야함
+  > * 클라이언트를 변경하지 않고, 서버의 구현 기능을 유연하게 변경할 수 있다. --> 가장 큰 본질
 
   **[의존하다]** : 내가 상대방을 알고있다.
 
 * #### 스프링과 객체 지향
-  > * 다형성이 가장 중요하며, 스프링은 이를 극대화해서 이용할 수 있게함   
+  > * 다형성이 가장 중요하며, 스프링은 이를 극대화해서 이용할 수 있게함
   > * Spring의 IoC(제어의역전), DI(의존관계 주입)은 다형성을 활용함, 따라서 역할과 구현을 편리하게 나눌 수 있도록 지원함
 
 <br>
@@ -16,58 +16,58 @@
 
 ### < --------------------------- 좋은 객체 지향 설계의 5가지 원칙(SOLID) --------------------------- >
 #### 1. SRP(Single Responsibility Principle) 단일 책임 원칙
-  > * 한 클래스는 하나의 책임만 가져야 한다.   
-  > * 하나의 책임이라는 것은 모호함   
-  > * 클 수도 작을수도   
-  > * 문맥과 상황에 따라 다르다.   
-  > * 중요한 기준은 변경이다.   
-  > * 변경이 있을 때 파급효과가 적으면 단일 책임 원칙을 잘 따른것(UI변경, 객체의 생성과 사용을 분리)   
+> * 한 클래스는 하나의 책임만 가져야 한다.
+> * 하나의 책임이라는 것은 모호함
+> * 클 수도 작을수도
+> * 문맥과 상황에 따라 다르다.
+> * 중요한 기준은 변경이다.
+> * 변경이 있을 때 파급효과가 적으면 단일 책임 원칙을 잘 따른것(UI변경, 객체의 생성과 사용을 분리)
 
 #### 2. OCP(Open-Closed Principle) 계방-폐쇄 원칙
-   > * 소프트웨어 요소는 확장에는 열려 있으나 변경에는 닫혀 있어야 한다.   
-   > * 다형성을 활용하면 가능해짐   
-   > * 인터페이스를 구현한 새로운 클래스를 하나 만들어서 새로운 기능 구현 -- 확장   
-   > * 지금까지 배운 역할과 구현의 분리 생각하면 답이 나옴   
+> * 소프트웨어 요소는 확장에는 열려 있으나 변경에는 닫혀 있어야 한다.
+> * 다형성을 활용하면 가능해짐
+> * 인터페이스를 구현한 새로운 클래스를 하나 만들어서 새로운 기능 구현 -- 확장
+> * 지금까지 배운 역할과 구현의 분리 생각하면 답이 나옴
 
-   **[문제점]**   
-   > * MemberService 클라이언트가 구현 클래스를 직접 선택
-   > ``` java
+**[문제점]**
+> * MemberService 클라이언트가 구현 클래스를 직접 선택
+> ``` java
    > MemberService m = new MemoryMemberRepository(); // 기존코드
    > MemberService m = new JdbcMemberRepository(); // 변경코드  
    > ``` 
-   > * 구현 객체를 변경하려면 클라이언트 코드 변경 필요   
-   > * 다형성을 이용했지만 OCP 원칙을 지킬 수 없다.   
+> * 구현 객체를 변경하려면 클라이언트 코드 변경 필요
+> * 다형성을 이용했지만 OCP 원칙을 지킬 수 없다.
 
-  **[어떻게 해결?]**   
-   > * 객체를 생성하고, 연관관계를 맺어주는 별도의 조립, 설정자가 필요(Spring이 해줌)
+**[어떻게 해결?]**
+> * 객체를 생성하고, 연관관계를 맺어주는 별도의 조립, 설정자가 필요(Spring이 해줌)
 
 #### 3. LSP(Liskov subsitution principle) 리스코프 치환 원칙
-   > * 프로그램의 객체는 프로그램의 정확성을 깨뜨리지 않으면서 하위 타입의 인스턴스로 바꿀 수 있어야 한다.   
-   > *  다형성에서 하위 클래스는 인터페이스 규약을 다 지켜야 한다는 것, 다형성을 지원히기 위한 원칙, 
-   인터페이스를 구현한 구현체는 믿고 사용하려면 필요
-   > * 단순히 컴파일 성공을 넘어서는 이야기   
-   ex) 자동차 인터페이스에서 악셀은 앞으로 가라는 기능, 뒤로 가게 구현하면 LSP위반
+> * 프로그램의 객체는 프로그램의 정확성을 깨뜨리지 않으면서 하위 타입의 인스턴스로 바꿀 수 있어야 한다.
+> *  다형성에서 하위 클래스는 인터페이스 규약을 다 지켜야 한다는 것, 다형성을 지원히기 위한 원칙,
+     인터페이스를 구현한 구현체는 믿고 사용하려면 필요
+> * 단순히 컴파일 성공을 넘어서는 이야기   
+    ex) 자동차 인터페이스에서 악셀은 앞으로 가라는 기능, 뒤로 가게 구현하면 LSP위반
 
 
 #### 4. ISP(Interface Segregation Principle) 인터페이스 분리 원칙
-   > * 특정 클라이언트를 위한 인터페이스 여러 개가 범용 인터페이스 하나보다 낫다.
-   > * 자동차 인터페이스 -> 운전, 정비 인터페이스로 분리
-   > * 사용자 클라이언트 -> 운전자, 정비사 클라이언트로 분리
-   > * 분리하면 정비 인터페이스 자체가 변해도 운전자 클라이언트에 영향을 주지 않음
-   > * 인터페이스가 명확해지고, 대체 가능성이 높아짐
+> * 특정 클라이언트를 위한 인터페이스 여러 개가 범용 인터페이스 하나보다 낫다.
+> * 자동차 인터페이스 -> 운전, 정비 인터페이스로 분리
+> * 사용자 클라이언트 -> 운전자, 정비사 클라이언트로 분리
+> * 분리하면 정비 인터페이스 자체가 변해도 운전자 클라이언트에 영향을 주지 않음
+> * 인터페이스가 명확해지고, 대체 가능성이 높아짐
 
 #### 5. DIP(Depnedency Inversion Principle) 의존관계 역전 원칙
-   > * 프로그래머는 "추상화에 의존해야지, 구체화에 의존하면 안된다." 의존성 주입은 이 원칙을 따르는 방법 중 하나다.
-   > * 쉽게 이야기해서 구현 클래스에 의존하지 말고, 인터페이스에 의존하라는 뜻
-   > * 앞에서 이야기한 역할(ROLE)에 의존하게 해야 한다는 것과 같음, 객체 세상도 클라이언트가 인터페이스에 의존해야 유연하게 구현체를 변경가능함
-   구현체에 의존하게 되면 변경이 아주 어려워진다.
+> * 프로그래머는 "추상화에 의존해야지, 구체화에 의존하면 안된다." 의존성 주입은 이 원칙을 따르는 방법 중 하나다.
+> * 쉽게 이야기해서 구현 클래스에 의존하지 말고, 인터페이스에 의존하라는 뜻
+> * 앞에서 이야기한 역할(ROLE)에 의존하게 해야 한다는 것과 같음, 객체 세상도 클라이언트가 인터페이스에 의존해야 유연하게 구현체를 변경가능함
+    구현체에 의존하게 되면 변경이 아주 어려워진다.
 
-   > * OCP에서 설명한 `MemberService`는 인터페이스에 의존하지만 동시에 구현 클래스도 의존한다.
-   > * `MemberService` 클라이언트가 구현 클래스를 직접 선택
-   > ``` java
+> * OCP에서 설명한 `MemberService`는 인터페이스에 의존하지만 동시에 구현 클래스도 의존한다.
+> * `MemberService` 클라이언트가 구현 클래스를 직접 선택
+> ``` java
    > MemberRepository m = new MemoryMemberRepository();
    > ```
-   > * 이는 DIP 위반
+> * 이는 DIP 위반
 
 * #### 정리
   > * 객체 지향의 핵심은 다형성
@@ -113,13 +113,13 @@
   > * 회원을 가입하고 조회할 수 있다.
   > * 회원은 일반과 VIP 두 가지 등급이 있다.
   > * 회원 데이터는 자체 DB를 구축할 수 있고, 외부 시스템과 연동할 수 있다. (미확정)   
-  (인터페이스로 일단 구현)
+      (인터페이스로 일단 구현)
 * #### 주문과 할인 정책
   > * 회원은 상품을 주문할 수 있다.
   > * 회원 등급에 따라 할인 정책을 적용할 수 있다.
   > * 할인 정책은 모든 VIP는 1000원을 할인해주는 고정 금액 할인을 적용해달라. (나중에 변경 될 수 있다.)
   > * 할인 정책은 변경 가능성이 높다. 회사의 기본 할인 정책을 아직 정하지 못했고, 오픈 직전까지 고민을 미루고 싶다.
-  최악의 경우 할인을 적용하지 않을 수 도 있다. (미확정)
+      최악의 경우 할인을 적용하지 않을 수 도 있다. (미확정)
 
 
 * #### 요구사항에서 회원 데이터, 할인 정책은 지금 결정하기 어려운 부분, 그렇다고 결정될때까지 기다릴 수 는 없다.
@@ -134,14 +134,14 @@
   > * 먼저 인터페이스를 우선 만듦 이후 구현체는 (메모리 회원 저장소, DB 회원 저장소, 외부 시스템 연동 회원 저장소)로 나뉨
   > * 하지만 자체 DB로 할지 외부 시스템 연동을 할지 정해지지 않음
   > * 따라서 메모리 회원 저장소를 이용하는데 이는 자바 코드로 회원 객체를 넣다 뺐다 할 수 있는 것을 만들이 일단 개발 진행(실행, 테스트 모두 가능)   
-  (후에 변경 가능)
+      (후에 변경 가능)
 
 * #### 개념적 그림은 회원 도메인 협력관계, 회원 클래스 다이어그램, 회원 객체 다이어그램 이렇게 그림이 총 3개가 만들어진다.
   > * 회원 도메인 협력관계 : 기획자들도 볼 수 있는 그림
   > * 회원 클래스 다이어그램 : 도메인 협력관계를 바탕으로 개발자들이 만듦
   > * 회원 객체 다이어그램 : 실제 서버를 실행하지 않고 클래스들만 분석해서 볼 수 있음   
-  (다만 구현체(메모리 멤버 레포, 디비 레포)들은 동적으로 결정된다, 따라서 객체 다이어그램이 따로 존재함
-  이는 실제 `new`로 연결된 인스턴스들 끼리의 참조를 보여줌)
+      (다만 구현체(메모리 멤버 레포, 디비 레포)들은 동적으로 결정된다, 따라서 객체 다이어그램이 따로 존재함
+      이는 실제 `new`로 연결된 인스턴스들 끼리의 참조를 보여줌)
 
 <br>
 <br>
@@ -214,7 +214,7 @@
 
 * #### 클래스 다이어그램은 정적이며 객체 다이어그램은 동적이다.
   > * 우리는 할인정책 구현체를 정액 할인 정책(등급 상관없이 일정금액 할인)과 정률 할인 정책(%단위의 할인)
-  2개를 임시로 구현체를 만들것이므로 2개의 주문 도메인 객체 다이어그램이 생성된다.
+      2개를 임시로 구현체를 만들것이므로 2개의 주문 도메인 객체 다이어그램이 생성된다.
 
 <br>
 <br>
@@ -277,16 +277,16 @@
 
 ### < --------------------------- 새로운 할인 정책 개발 --------------------------- >
 * #### 기획자의 새로운 요구사항
- **[기획자]**   
-  > 서비스 오픈 직전에 할인 정책을 지금처럼 고정 금액 할인이 아니라   
-  좀 더 합리적인 주문 금액당 할인하는 `정률% 할인`으로 변경하고 싶어요.   
-  예를 들어서 기존 정책은 VIP가 10000원을 주문하든 20000원을 주문하든 항상 1000원을 할인했는데,   
-  이번에 새로 나온 정책은 10%로 지정해두면 고객이 10000원 주문시 1000원을 할인해주고,   
-  20000원 주문시에 2000원을 할인해주는 거에요!
+**[기획자]**
+> 서비스 오픈 직전에 할인 정책을 지금처럼 고정 금액 할인이 아니라   
+좀 더 합리적인 주문 금액당 할인하는 `정률% 할인`으로 변경하고 싶어요.   
+예를 들어서 기존 정책은 VIP가 10000원을 주문하든 20000원을 주문하든 항상 1000원을 할인했는데,   
+이번에 새로 나온 정책은 10%로 지정해두면 고객이 10000원 주문시 1000원을 할인해주고,   
+20000원 주문시에 2000원을 할인해주는 거에요!
 
 
- **<개발자>**
-  >객체지향설계 원칙을 준수 했으므로 가능할거라 생각
+**<개발자>**
+>객체지향설계 원칙을 준수 했으므로 가능할거라 생각
 
 * #### 따라서 정말 객체지향설계 원칙을 잘 준수했는지 확인해봐야함
   > * 기존에 `DiscountPolicy`를 구현하는 `FixDiscountPolicy`가 존재하므로 `RateDiscountPolicy`만 추가로 개발하면 됨
@@ -323,7 +323,7 @@
 
 * #### 실무에서의 할인정책 로직은 쉽지 않다. (특히 돈 관련 된 로직은 매우 많은 테스트를 가짐)
   > * 다만 위와 같은 상황은 설계과 잘 되어있기 때문에 쉽게 테스트 할 수 있음   
-  (단일 책임 원칙이 잘 지켜져서 할인과 관련된 부분은 할인 부분만 테스트하므로)
+      (단일 책임 원칙이 잘 지켜져서 할인과 관련된 부분은 할인 부분만 테스트하므로)
 
 * #### 이제 RateDiscountPolicy를 실제 적용을 해보자
 
@@ -344,9 +344,9 @@
   > * 다형성 활용, 인터페이스와 구현 객체 분리 O
   > * OCP, DIP 같은 객체지향 설계 원칙을 준수? X
   > * DIP :  OrderServiceImple은 DiscountPolicy인터페이스만 의존하는것이 아니라    
-  구현체인 Fix, RateDiscountPolicy도 동시에 의존함 따라서 DIP를 위반함
+      구현체인 Fix, RateDiscountPolicy도 동시에 의존함 따라서 DIP를 위반함
   > * OCP : 변경하지 않고 확장할 수 있을것 같지만 기능을 확장해서 변경하려면   
-  클라이언트(OrderServiceImpl)의 코드에 직접적으로 영향을준다 따라서 OCP를 위반함
+      클라이언트(OrderServiceImpl)의 코드에 직접적으로 영향을준다 따라서 OCP를 위반함
 
 * #### 이것을 해결하기 위해 인터페이스에만 의존하도록 설계하면
   > * `private DiscountPolicy discounPolicy;` (final은 객체를 생성해야 작성가능)
@@ -381,49 +381,49 @@
 **[AppConfig]**
 ```java
         // 애플리케이션 전체를 설정하고 구성함
-        // 구현 객체를 생성하고, 연결하는 책임을 가짐
-        public class AppConfig {
+// 구현 객체를 생성하고, 연결하는 책임을 가짐
+public class AppConfig {
 
-            // memberService를 만들어보자
-            public MemberService memberService() {
-                return new MemberServiceImpl(new MemoryMemberRepository());
-            }
-        
-            public OrderService orderService() {
-                return new OrderServiceImpl(new MemoryMemberRepository(), new FixDiscountPolicy());
-            }
-        
-        }
+    // memberService를 만들어보자
+    public MemberService memberService() {
+        return new MemberServiceImpl(new MemoryMemberRepository());
+    }
+
+    public OrderService orderService() {
+        return new OrderServiceImpl(new MemoryMemberRepository(), new FixDiscountPolicy());
+    }
+
+}
 ```
 
 **[MemberServiceImpl]**
 ```java
         public class MemberServiceImpl implements MemberService {
 
-            private final MemberRepository memberRepository;
-            // AppConfig를 통해 레포지토리의 구현체를 참조하고, 인터페이스에만 의존함
-            // 어떤 레포지토리가 들어올지 모르고, 상관쓰지 않아도 됨
-            public MemberServiceImpl(MemberRepository memberRepository) {
-                this.memberRepository = memberRepository;
-            }
-        
-            @Override
-            public void join(Member member) {
-                memberRepository.save(member);
-            }
-        
-            @Override
-            public Member findMember(Long memberId) {
-                return memberRepository.findById(memberId);
-            }
-        }
+    private final MemberRepository memberRepository;
+    // AppConfig를 통해 레포지토리의 구현체를 참조하고, 인터페이스에만 의존함
+    // 어떤 레포지토리가 들어올지 모르고, 상관쓰지 않아도 됨
+    public MemberServiceImpl(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    @Override
+    public void join(Member member) {
+        memberRepository.save(member);
+    }
+
+    @Override
+    public Member findMember(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+}
 ```
-        
 
 
-  > 즉, AppConfig는 애플리케이션의 실제 동작에 필요한 구현 객체를 생성함   
-  > 또한, AppConfig는 생성한 객체 인스턴스의 참조(레퍼런스)를 생성자를 통해서 주입(연결)해준다.   
-  (OrderServiceImpl도 동일하게 설계)
+
+> 즉, AppConfig는 애플리케이션의 실제 동작에 필요한 구현 객체를 생성함   
+> 또한, AppConfig는 생성한 객체 인스턴스의 참조(레퍼런스)를 생성자를 통해서 주입(연결)해준다.   
+(OrderServiceImpl도 동일하게 설계)
 
 * #### 결국 설계 변경을 통해 `MemberServiceImpl`은 `MemoryMemberRepository를` 의존하지 않는다. (`OrderServiceImpl`은 `MemoryMemberRepository`, `FixDiscountPolicy를` 의존하지 않음)
 
@@ -445,9 +445,9 @@
 
 * #### `MeberApp` 수정 : 기존에 묵시적 기본생성자를 사용하던 코드들에서 오류가 나므로 수정을 요함
   > * 직접적으로 new를 이용해 MemberServiceImpl객체를 생성하고 MemberServiceImpl에서 MemoryMemberRepository를 생성함   
-  (순차적으로 생성되는 모양)
-  하지만 이제는 `AppConfig.memberService()`메소드를 이용해` MemberServiceImpl`객체를 `MemberService인터페이스 형식`으로 받아온다.   
-  (이 방법은 `AppConfig에서 순차적 생성이 아닌 전부 결정`해준다.)
+      (순차적으로 생성되는 모양)
+      하지만 이제는 `AppConfig.memberService()`메소드를 이용해` MemberServiceImpl`객체를 `MemberService인터페이스 형식`으로 받아온다.   
+      (이 방법은 `AppConfig에서 순차적 생성이 아닌 전부 결정`해준다.)
   > * 나머지 로직은 동일함
 
 * #### `OrderApp` 수정 : 이 또한 위와 동일하게 묵시적 생성자를 사용하던 코드에서 오류가 발생
@@ -476,26 +476,26 @@
 * #### 현재 AppConfig를 보면 "`중복`"이 있고, "`역할`"에 따른 "`구현`"이 잘 안보인다. : 설정(구성)정보에선 이렇게 한눈에 보이는것이 중요하다. 따라서 아래와 같이 변경함
 ```java
     public class AppConfig {
-            // 멤버 서비스 역할
-            public MemberService memberService() {
-                return new MemberServiceImpl(memberRepository());
-            }
-        
-            // 저장소 역할 : 저장소 변경시 아래 코드만 변경하면 된다.
-            private MemberRepository memberRepository() {
-                return new MemoryMemberRepository();
-            }
-        
-            // 주문 서비스 역할
-            public OrderService orderService() {
-                return new OrderServiceImpl(memberRepository(), discountPolicy());
-            }
-        
-            // 할인 정책 역할 : 정책 변경시 아래 코드만 변경하면 됨
-            public DiscountPolicy discountPolicy() {
-                return new FixDiscountPolicy();
-            }
+    // 멤버 서비스 역할
+    public MemberService memberService() {
+        return new MemberServiceImpl(memberRepository());
     }
+
+    // 저장소 역할 : 저장소 변경시 아래 코드만 변경하면 된다.
+    private MemberRepository memberRepository() {
+        return new MemoryMemberRepository();
+    }
+
+    // 주문 서비스 역할
+    public OrderService orderService() {
+        return new OrderServiceImpl(memberRepository(), discountPolicy());
+    }
+
+    // 할인 정책 역할 : 정책 변경시 아래 코드만 변경하면 됨
+    public DiscountPolicy discountPolicy() {
+        return new FixDiscountPolicy();
+    }
+}
 ```
 
 * #### 위 방식의 큰 장점은 각 메소드 명을 통해 역할이 전부 드러나고, 각 서비스에 대한 구현과 주입되는 저장소, 정책은 다른 메소드가 담당하므로 `변경 시 정책, 저장소 코드만 변경하면 됨`
@@ -520,13 +520,13 @@
 * #### 따라서 할인정책을 변경하게되면 `AppConfig즉 구성영역의 코드만 변경`되고, 사용영역의 코드는 전혀 변경될 필요가 없다.
   > * `FixDiscountPolicy -> RateDiscountPolicy` 변경시 구성영역만 영향받고, 사용 영역 영향 X
   > * 이제 할인 정책을 변경해도, 애플리케이션의 구성 역할을 담당하는 `AppConfig만 변경`하면 된다.   
-  클라이언트 코드인 OrderServiceImpl 를 포함해서 사용 영역의 어떤 코드도 변경할 필요가 없다
+      클라이언트 코드인 OrderServiceImpl 를 포함해서 사용 영역의 어떤 코드도 변경할 필요가 없다
   > * 만약 AppConfig를 xml로 작성하면 정말 자바코드 변경없이 사용할 수 있다.
 
 * #### 이렇게 되면서 DIP, OCP가 지켜졌다. `FixDiscount -> RateDiscount 변경 시`
   > * OrderServiceImpl에서 클라이언트 코드는 추상화에 의존하고 있다. : `DIP`
   > * 정책을 확장했지만 구성영역만 코드가 변경하면 되고 클라이언트 코드는 손댈 필요가 없다.   
-  따라서 확장에는 열려있지만 변경에는 닫혀있다. : `OCP`
+      따라서 확장에는 열려있지만 변경에는 닫혀있다. : `OCP`
 
 * #### 다음시간에는 지금까지 배운것을 정리해보자
 
@@ -557,10 +557,10 @@
   > * 중복 제거
 
 * #### 새로운 구조와 할인 정책 적용
-  * `정액 할인 정책 -> 정률 할인 정책`으로 변경
-  * AppConfig의 등장으로 `애플리케이션이 사용 영역과 객체를 생성하고 구성하는 영역으로 분리`됨
-  * 할인정책을 변경해도 AppConfig에 구성영역만 변경하면 되고, 사용 영역은 변경할 필요가 없어짐,    
-    따라서 `클라이언트 코드인 OrderServiceImpl도 변경하지 않음`
+    * `정액 할인 정책 -> 정률 할인 정책`으로 변경
+    * AppConfig의 등장으로 `애플리케이션이 사용 영역과 객체를 생성하고 구성하는 영역으로 분리`됨
+    * 할인정책을 변경해도 AppConfig에 구성영역만 변경하면 되고, 사용 영역은 변경할 필요가 없어짐,    
+      따라서 `클라이언트 코드인 OrderServiceImpl도 변경하지 않음`
 
 <br>
 <br>
@@ -605,8 +605,8 @@
       (`OrderServiceImpl은` 필요한 인터페이들을 호출하지만 어떤 구현 객체들이 실행될지 `모른다`.)
 
   > * `프로그램 제어 흐름에 대한 권한은 AppConfig가 모두 가지고 있고` 심지어 OrderServiceImpl도 AppConfig가 생성함
-    그리고 AppConfig는 OrderServiceImpl이 아닌 OrderService 인터페이스의 다른 구현 객체들을 생성하고 실행할 수 도 있다.
-    OrderServiceImpl은 그런 사실을 모르고 자신의 로직을 실행함
+      그리고 AppConfig는 OrderServiceImpl이 아닌 OrderService 인터페이스의 다른 구현 객체들을 생성하고 실행할 수 도 있다.
+      OrderServiceImpl은 그런 사실을 모르고 자신의 로직을 실행함
 
   > * 이렇게 `프로그램의 제어 흐름을 직접 제어하는것이 아닌 외부에서 관리하는 것을 제어의 역전(IoC)라고 한다`.
 
@@ -621,26 +621,26 @@
 
 
 **[ 정적인 클래스 의존 관계 ]**
-	
-  > * 클래스가 사용하는` import코드`만 보고 의존관계를 쉽게 판단할 수 있다. 정적인 의존관계는 `애플리케이션을 실행하지 않아도` 분석할 수 있다.
-  > * 클래스 다이어그램에서 OrderServiceImpl은 MemberRepository, DiscountPolicy에 의존하는것을 알 수 있다.
+
+> * 클래스가 사용하는` import코드`만 보고 의존관계를 쉽게 판단할 수 있다. 정적인 의존관계는 `애플리케이션을 실행하지 않아도` 분석할 수 있다.
+> * 클래스 다이어그램에서 OrderServiceImpl은 MemberRepository, DiscountPolicy에 의존하는것을 알 수 있다.
     그런데 이런 `클래스 의존관계 만으로는 실제 어떤 객체가 OrderServiceImpl에 주입될지 알 수 없다`.   
     (클래스 다이어그램에서 상속, 의존, 인터페이스 구현이던 `화살표 방향으로 의존`하고 있다는 것을 알아두자)
 
 
 **[ 동적인 객체 인스턴스 의존 관계 ]**
 
-  > * 애플리케이션 실행 시점에 `실제 생성된 객체 인스턴스의 참조`가 연결된 의존 관계임
-  > * `객체 다이어그램`을 보면 알 수 있다.
+> * 애플리케이션 실행 시점에 `실제 생성된 객체 인스턴스의 참조`가 연결된 의존 관계임
+> * `객체 다이어그램`을 보면 알 수 있다.
 
-  > * 애플리케이션 실행 시점(런타임)에 외부에서 실제 구현 객체를 생성하고 클라이언트에 전달해서   
+> * 애플리케이션 실행 시점(런타임)에 외부에서 실제 구현 객체를 생성하고 클라이언트에 전달해서   
     클라이언트와 서버의 실제 의존관계가 연결되는 것을 "`의존관계 주입`"이라 한다.
-  > * `객체 인스턴스를 생성`하고, 그 `참조값(객체)을 전달해서 연결`된다.
+> * `객체 인스턴스를 생성`하고, 그 `참조값(객체)을 전달해서 연결`된다.
 
-  > * 의존관계 주입을 사용하면 클라이언트 코드를 `변경하지 않고`, 클라이언트가 호출하는 대상의 타입 `인스턴스를 변경`할 수 있다.
-  > * 의존관계 주입을 사용하면 정적인 클래스 의존관계를 변경하지 않고, `동적인 객체 인스턴스 의존관계를 쉽게 변경`할 수 있다.   
-      (정적인 그림인 클래스 다이어그램이 전혀 변경되지 않고, 동적인 그림인 객체 다이어그램만 변경시킴
-       정적인 다이어그램 손대지 않는다? `애플리케이션 코드를 손대지 않는다와 동일한 말`)
+> * 의존관계 주입을 사용하면 클라이언트 코드를 `변경하지 않고`, 클라이언트가 호출하는 대상의 타입 `인스턴스를 변경`할 수 있다.
+> * 의존관계 주입을 사용하면 정적인 클래스 의존관계를 변경하지 않고, `동적인 객체 인스턴스 의존관계를 쉽게 변경`할 수 있다.   
+    (정적인 그림인 클래스 다이어그램이 전혀 변경되지 않고, 동적인 그림인 객체 다이어그램만 변경시킴
+    정적인 다이어그램 손대지 않는다? `애플리케이션 코드를 손대지 않는다와 동일한 말`)
 
 
 
@@ -669,7 +669,7 @@
 * 따라서 객체를 찾아올때는 AppConfig에서 직접 찾아오는것이 아닌 `스프링 컨테이너`를 통해서 찾아옴
   > * `applicationContext.getBean("memberService", MemberService.class);`
   > * 인자의 첫번째는 이름을 줌(이름은 AppConfig의 메소드의 이름이 디폴트로 등록됨), 두번째 인자는 타입을 정하며 이를 지정해야 반환타입이 맞아짐
-  > *` memberService`로 받아오고 실행함
+      > *` memberService`로 받아오고 실행함
 
 * 실행하게 되면 `Creating shared instance of singleton bean`으로 `@Bean`으로 작성한 메소드들이 스프링 컨테이너에 등록이 되었다는 로그가 나타나며 실행된다.
   (AppConfig도 appConfig로 등록됨)
@@ -713,47 +713,47 @@
   ApplicationContext applicationContext = AnnotationConfigApplicationContext(AppConfig.class);
 ```
 
-  > * `ApplicationContext`를 `스프링 컨테이너`라 하고, 이는 `인터페이스`다. (`다형성이 적용`되어있다.)
+> * `ApplicationContext`를 `스프링 컨테이너`라 하고, 이는 `인터페이스`다. (`다형성이 적용`되어있다.)
 
-  > * 스프링 컨테이너는 `XML`기반 방식과, `Annotation`기반의 자바 설정 클래스(AppConfig)로 만들 수 있다.
+> * 스프링 컨테이너는 `XML`기반 방식과, `Annotation`기반의 자바 설정 클래스(AppConfig)로 만들 수 있다.
 
-  > * `자바 설정 클래스` 기반으로 스프링 컨테이너(ApplicationContext)를 만들어보자.
-  > *` new AnnotationConfigApplicationContext(AppConfig.class);`
-  > * 위 클래스는 `ApplicationContext 인터페이스 구현체`이다. (이 외에도 매우 많은 구현체가 존재)
+> * `자바 설정 클래스` 기반으로 스프링 컨테이너(ApplicationContext)를 만들어보자.
+    > *` new AnnotationConfigApplicationContext(AppConfig.class);`
+> * 위 클래스는 `ApplicationContext 인터페이스 구현체`이다. (이 외에도 매우 많은 구현체가 존재)
 
-  **[참고]**   
-  더 정확히는 스프링 컨테이너(안에 사용하는 객체를 담은것))를 부를 때 `BeanFactory`, `ApplicationContext`로 구분해서 이야기한다.(뒤에서 설명)   
-  BeanFactory를 직접 사용하는 경우는 거의 없으므로, 일반적으로 `ApplicationContext`를 `스프링 컨테이너`라 한다.
+**[참고]**   
+더 정확히는 스프링 컨테이너(안에 사용하는 객체를 담은것))를 부를 때 `BeanFactory`, `ApplicationContext`로 구분해서 이야기한다.(뒤에서 설명)   
+BeanFactory를 직접 사용하는 경우는 거의 없으므로, 일반적으로 `ApplicationContext`를 `스프링 컨테이너`라 한다.
 
 
-**[생성과정]**   
-  1. 스프링 컨테이너 생성   
-     * 스프링 컨테이너 생성(AppConfig.class) --> 스프링 컨테이너 생성됨(내부에 스프링 빈 저장소가 존재하고 key:빈 이름, value:빈 객쳬)
-       > * new AnnotationConfigApplication(AppConfig.class);
+**[생성과정]**
+1. 스프링 컨테이너 생성
+    * 스프링 컨테이너 생성(AppConfig.class) --> 스프링 컨테이너 생성됨(내부에 스프링 빈 저장소가 존재하고 key:빈 이름, value:빈 객쳬)
+      > * new AnnotationConfigApplication(AppConfig.class);
 
-     * 구성 정보 활용
-       > * 스프링 컨테이너 생성시 구성정보를 지정해주어야 하는데, 여기서는 AppConfig.class를 구성정보로 지정했다.
-  2. 스프링 빈 등록
-     * 스프링 컨테이너는 파라미터로 넘어온 설정 클래스 정보를 사용해서 스프링 빈을 등록한다.
-       > * 넘겨받은 AppConfig.class 구성 정보를 가지고 @Bean이 붙은 메소드들을 호출해서 빈을 등록한다.
-       > * 이때 빈 이름은 key로 가지고, 이름에 대한 값은 new로 생성한 객체를 return한 것을 빈 객체로 사용한다.
+    * 구성 정보 활용
+      > * 스프링 컨테이너 생성시 구성정보를 지정해주어야 하는데, 여기서는 AppConfig.class를 구성정보로 지정했다.
+2. 스프링 빈 등록
+    * 스프링 컨테이너는 파라미터로 넘어온 설정 클래스 정보를 사용해서 스프링 빈을 등록한다.
+      > * 넘겨받은 AppConfig.class 구성 정보를 가지고 @Bean이 붙은 메소드들을 호출해서 빈을 등록한다.
+      > * 이때 빈 이름은 key로 가지고, 이름에 대한 값은 new로 생성한 객체를 return한 것을 빈 객체로 사용한다.
 
-       > * Bean 이름(key로 가짐) : 빈 이름은 메소드 이름을 사용하거나 혹은 직접 부여할수 도 있다.( @Bean(name="memberService2) )
-       > * 다만 빈 이름은 항상 다른 이름을 부여해야함, 같은 이름을 부여하게 되면 다른 빈이 무시되거나, 덮어버리거나, 설정에 따라 오류발생가능성 높음
+      > * Bean 이름(key로 가짐) : 빈 이름은 메소드 이름을 사용하거나 혹은 직접 부여할수 도 있다.( @Bean(name="memberService2) )
+      > * 다만 빈 이름은 항상 다른 이름을 부여해야함, 같은 이름을 부여하게 되면 다른 빈이 무시되거나, 덮어버리거나, 설정에 따라 오류발생가능성 높음
 
-  3. 스프링 빈 의존관계 설정 - 준비
-      > * 스프링 컨테이너는 스프링 빈을 등록한 후 의존관계를 설정한다.
-      > * 스프링 컨테이너는 설정 정보를 참고해서 의존관계를 주입(DI)한다.
-      > * 단순히 자바 코드를 호출하는 것 같지만, 차이가 있다. 이 차이는 뒤에 싱글톤 컨테이너에서 설명함
+3. 스프링 빈 의존관계 설정 - 준비
+   > * 스프링 컨테이너는 스프링 빈을 등록한 후 의존관계를 설정한다.
+   > * 스프링 컨테이너는 설정 정보를 참고해서 의존관계를 주입(DI)한다.
+   > * 단순히 자바 코드를 호출하는 것 같지만, 차이가 있다. 이 차이는 뒤에 싱글톤 컨테이너에서 설명함
 
-  **[참고]**   
-  > 스프링은 빈을 생성하고, 의존관계를 주입하는 단계가 나누어져 있다.   
-  그런데 이렇게 자바 코드로 스프링 빈을 등록하면 생성자를 호출 하면서 의존관계 주입도 한번에 처리된다.   
-  여기서는 이해를 돕기 위해 개념적으로 나누어 설명했다. 자세한 내용은 외존관계 자동 주입에서 다시 설명함.
+**[참고]**
+> 스프링은 빈을 생성하고, 의존관계를 주입하는 단계가 나누어져 있다.   
+그런데 이렇게 자바 코드로 스프링 빈을 등록하면 생성자를 호출 하면서 의존관계 주입도 한번에 처리된다.   
+여기서는 이해를 돕기 위해 개념적으로 나누어 설명했다. 자세한 내용은 외존관계 자동 주입에서 다시 설명함.
 
-  **[정리]**
-  > 스프링 컨테이너를 생성하고, 설정(구성) 정보를 참고해 스프링 빈을 등록하고, 의존관계도 설정함   
-  다음시간에 스프링 컨테이너에서 데이터를 조회하자.
+**[정리]**
+> 스프링 컨테이너를 생성하고, 설정(구성) 정보를 참고해 스프링 빈을 등록하고, 의존관계도 설정함   
+다음시간에 스프링 컨테이너에서 데이터를 조회하자.
 
 <br>
 <br>
@@ -808,7 +808,7 @@
   > * AppConfig의 반환 타입이 인터페이스라고 해서 꼭 인터페이스 타입을 이용하지 않아도 된다.
   > * 스프링 빈에 등록된 인스턴스(객체) 타입을 보고 결정하기 때문에 꼭 인터페이스가 아니어도 됨.
   > * 다만 구체적인걸 사용하는것은 좋지 못함 왜? 우리는 역할(인터페이스)에 의존해야하고 구현(구현체)에 의존하면 안되기때문.   
-  (가끔 사용하다 보면 이상적으로 돌아가지 못할 때 필요 ㅎㅎ)
+      (가끔 사용하다 보면 이상적으로 돌아가지 못할 때 필요 ㅎㅎ)
 
   > * `빈 이름으로 조회 불가능 테스트(실패테스트)` : 존재하지 않는 빈을 조회하면 NoSuchBeanDefinitionException이 발생함을 이용해 검증할 수 있다.
   > * 이는 org.junit.jupiter.api.Assertions을 이용한다 상단의 Assertions와 다른 클래스
@@ -853,7 +853,7 @@
 * #### 그래서 모든 자바 객체의 최고 부모인 `Object 타입`으로 조회하면, `모든 스프링 빈을 조회`한다.
   > * pdf의 상속관계 예시를 보면 부모타입도 포함하여 하위 자식들 모두를 조회한다.
 
-**[TEST]**   
+**[TEST]**
 >static 클래스로 TestConfig생성 : Rate, FixDiscountPolicy로 빈 생성
 
 1. 부모 타입으로 조회시, 자식이 둘 이상 있으면, `중복 오류` 발생
@@ -888,22 +888,22 @@
   > * `애플리케이션을 개발할 때`는 빈은 관리하고 조회하는 기능은 물론이고, `수 많은 부가기능이 필요`하다.
 
 * #### ApplicationContext가 제공하는(상속받은) `부가기능` (BeanFactory말고도)
-  * `메시지 소스를 활용한 국제화 기능(MessageSource <<interface>> )`
-    * 예를 들어서 한국에서 들어오면 한국어로, 영어권에서 들어오면 영어로 출력
-      <br><br>
-  * `환경 변수 (EnvironmentCapable <<interface>> )`
-    * 로컬, 개발, 운영 등을 구분해서 처리
-    * 개발은 크게 3가지의 개발환경이 있다.
-      1. `로컬` : 현재 내 PC에서 개발하는 환경
-      2. `테스트 서버` : 테스트 서버에 띄워두고 테스트 할 수 있는 환경
-      3. `운영 환경` : 실제 프로덕션에 나가는 환경
-      4. 추가로 `스테이징환경` : 운영과 가장 밀접한(비슷한) 환경 등이 있다.
-      <br><br>
-  * `애플리케이션 이벤트(ApplicationEventPublisher <<interface>> )`
-    * 애플리케이션 내에서 특정 이벤트를 발행하고 구독하는 모델을 편리하게 지원
-      <br><br>
-  * `편리한 리소스 조회(ResourceLoader <<interface>> )`
-    * 파일, 클래스패스, 외부 등에서 리소스를 추상화하여 편리하게 조회할 수 있게함
+    * `메시지 소스를 활용한 국제화 기능(MessageSource <<interface>> )`
+        * 예를 들어서 한국에서 들어오면 한국어로, 영어권에서 들어오면 영어로 출력
+          <br><br>
+    * `환경 변수 (EnvironmentCapable <<interface>> )`
+        * 로컬, 개발, 운영 등을 구분해서 처리
+        * 개발은 크게 3가지의 개발환경이 있다.
+            1. `로컬` : 현재 내 PC에서 개발하는 환경
+            2. `테스트 서버` : 테스트 서버에 띄워두고 테스트 할 수 있는 환경
+            3. `운영 환경` : 실제 프로덕션에 나가는 환경
+            4. 추가로 `스테이징환경` : 운영과 가장 밀접한(비슷한) 환경 등이 있다.
+               <br><br>
+    * `애플리케이션 이벤트(ApplicationEventPublisher <<interface>> )`
+        * 애플리케이션 내에서 특정 이벤트를 발행하고 구독하는 모델을 편리하게 지원
+          <br><br>
+    * `편리한 리소스 조회(ResourceLoader <<interface>> )`
+        * 파일, 클래스패스, 외부 등에서 리소스를 추상화하여 편리하게 조회할 수 있게함
 
 
 * #### 정리
@@ -932,7 +932,7 @@
 
 * #### XML 기반 설정 사용
   > * 최근 스프링 부트의 사용으로 XML기반의 설정은 잘 사용하지 않음,    
-  많은 레거시 프로젝트 들이 XML로 되어 있고  또 XML을 사용하면 컴파일 없이 빈 설정 정보를 변경할 수 있는 장점도 있다.
+      많은 레거시 프로젝트 들이 XML로 되어 있고  또 XML을 사용하면 컴파일 없이 빈 설정 정보를 변경할 수 있는 장점도 있다.
   > * `GenericXmlApplicationContext`를 사용하면서 xml 설정 파일을 넘기면 된다.
 
 * #### 자바 코드가 아닌 파일은 `resources`아래에 둔다 xml도 마찬가지 (appConfig.xml)
@@ -983,12 +983,12 @@
 * #### 스프링이 빈을 등록하는 방식은 크게 봤을때 2가지가 존재(어노테이션, xml, 임의 설정의 상위 방식)
     1. 직접 스프링 빈을 등록하는 방법 : `XML Config`
     2. 우회하여 Factory Method를 이용하여 스프링 빈을 등록하는 방법 : `Java Config`
-<br><br>
+       <br><br>
 
 * #### 추가로 Annotation이 아닌 GenericXmlApplicationContext로 만들어서 BeanDefinition을 출력해보면 Annotation 방식과는 다른점을 알 수있다.
   > * Bean에 대한 클래스가 다 드러남(Java Config는 NULL)
   > * FactoryBean, Method가 Null값 : xml은 직접 스프링 빈을 등록하므로   
-  (Java Config는 factoryBeanName:appConfig, factoryMethodName=... 으로 존재)
+      (Java Config는 factoryBeanName:appConfig, factoryMethodName=... 으로 존재)
 
 <br>
 <br>
@@ -1019,9 +1019,9 @@
 * #### Singleton pattern 예제 코드 분석 `[test/hello/core/singleton/SingletonService.java]`
   > * `static 영역`에 객체 instance를 하나 생성해서 올려둠. >> 실행시 JVM 메모리에
   > * 객체 인스턴스가 필요하면 오직 `getInstance() 메소드`를 통해서만 조회할 수 있다.   
-  (여기서 메서드를 호출하면 항상 같은 인스턴스 반환)
+      (여기서 메서드를 호출하면 항상 같은 인스턴스 반환)
   > * 오직 1개의 객체 인스턴스만 존재해야 하므로, 생성자를 `private`으로 두어
-  외부에서 new키워드로 객체 인스턴스가 생성되는 것을 `막는다`.
+      외부에서 new키워드로 객체 인스턴스가 생성되는 것을 `막는다`.
 
 * #### Singleton pattern Test 예제 코드 분석 `[test/hello/colr/singleton/SingletonServiceTest.java]`
   > * `private`으로 new 키워드를 막아두었다.
@@ -1031,15 +1031,15 @@
 * #### 싱글톤 패턴을 적용하면 이미 만들어진 객체를 공유하여 효율적으로 사용하지만 수많은 문제점을 가진다.
   > * 싱글톤 패턴을 구현하는 `코드 자체가 많이 들어감`
   > * 의존관계상 클라이언트가 `구체 클래스에 의존`한다.(`구체클래스.getInstance()`) --> 즉 `DIP`를 위반함   
-  (하지만 `Config파일을 거치게 되면` DIP를 지킬 수 있다.)
+      (하지만 `Config파일을 거치게 되면` DIP를 지킬 수 있다.)
   > * 클라이언트가 구체 클래스에 의존해서 `OCP 원칙`을 `위반`할 가능성이 높음
   > * `테스트` 하기 어렵다.   
-  (객체를 `지정`해서 가져오고, 인스턴스를 `미리 생성`하므로)
+      (객체를 `지정`해서 가져오고, 인스턴스를 `미리 생성`하므로)
   > * 내부 속성을 변경 및 초기화 하기 어렵다.
   > * `private 생성자`를 사용하므로 자식 클래스를 만들기 어렵다.
   > * 결과적으로 `유연성`이 떨어짐
   > * `안티패턴`으로 불리기도 한다.   
-  (많이 사용되는 패턴이지만 비효율적이거나 비생산적인 패턴을 의미한다)
+      (많이 사용되는 패턴이지만 비효율적이거나 비생산적인 패턴을 의미한다)
 
 * #### 스프링 프레임워크는 이런 문제점을 전부 해결함 즉 싱글톤이 가진 `단점`을 `제거`하고, 객체를 싱글톤으로 관리해준다.
   > * 스프링 컨테이너는 `싱글톤 컨테이너`라고도 불림 싱글톤 컨테이너의 역할을 알아보자
@@ -1071,9 +1071,9 @@
 
   **[참고]**
   > * 스프링의 기본 빈 등록 방식은 싱글톤이지만, 싱글톤 방식만 지원하는 것은 아니다. 요청할 때 마다 새로운 객체를 생성해서 반환하는 기능도 제공한다.
-  자세한 내용은 후의 빈 스코프에서 설명
+      자세한 내용은 후의 빈 스코프에서 설명
   > * 특별한 기능 이용시 사용 : 요청할 때 마다 새로 꺼내거나, HttpRequest life Cycle에 맞춰 빈 라이프 사이클을 맞추거나, 고객이 들어올때 만들고 나갈때 죽이는 사이트
-  혹은 HttpSession과 같은 라이프 사이클을 맞추거나 할 때 사용된다.
+      혹은 HttpSession과 같은 라이프 사이클을 맞추거나 할 때 사용된다.
 
 <br>
 <br>
@@ -1093,14 +1093,14 @@
 * #### SingletonStateServiceTest (영한님은 StatefulServiceTest)에 `stateful`, `stateless`한 테스트를 2개 만들고 테스트하자 (코드 참조)
 
 **[StatefulService]**
-  > * 우선 StatefulService는 특정 클라이언트에 의존적이고 값을 변경할 수 있는 필드인 `price`가 존재한다.
-  > * 이는 특정 메소드가 실행되었을때 공유 필드인 int price에 값이 `저장`되는데 이를 `stateful`하다고 말 할 수 있다.
-  > * 이를 해결하기 위해 `stateless`하게 변경해야 한다.
+> * 우선 StatefulService는 특정 클라이언트에 의존적이고 값을 변경할 수 있는 필드인 `price`가 존재한다.
+> * 이는 특정 메소드가 실행되었을때 공유 필드인 int price에 값이 `저장`되는데 이를 `stateful`하다고 말 할 수 있다.
+> * 이를 해결하기 위해 `stateless`하게 변경해야 한다.
 
-  **[StatelessService]**
-  > * StatelessService는 주문을 했을때 공유 필드에 값을 저장하는 것이 아닌 사용자가 주문한 값을 `바로 반환`해준다.
-  > * 따라서 요청이 들어올때마다 즉시 즉시 값을 반환하므로 클라이언트는 `자신이 주문한 값`을 바로 확인할 수 있다.
-  > * `공유 필드에 저장되지 않았으므로` stateful하지 않게 된다.
+**[StatelessService]**
+> * StatelessService는 주문을 했을때 공유 필드에 값을 저장하는 것이 아닌 사용자가 주문한 값을 `바로 반환`해준다.
+> * 따라서 요청이 들어올때마다 즉시 즉시 값을 반환하므로 클라이언트는 `자신이 주문한 값`을 바로 확인할 수 있다.
+> * `공유 필드에 저장되지 않았으므로` stateful하지 않게 된다.
 
 **[정리]**
 * #### 단순한 설명을 위해 실제 쓰레드는 사용하지 않음
@@ -1159,31 +1159,31 @@
   > * 임의의 다른 클래스가 아래와같이 CGLIB의 기술로 싱글톤이 보장되도록 해준다.
 ```java
   @Bean
-  public MemberRepository memberRepository() {
-    if (memoryMemberRepository가 이미 스프링 컨테이너에 등록되어 있으면?) {
+public MemberRepository memberRepository() {
+        if (memoryMemberRepository가 이미 스프링 컨테이너에 등록되어 있으면?) {
         return 스프링 컨테이너에서 찾아서 반환;
-    
-    } else { //스프링 컨테이너에 없으면
+
+        } else { //스프링 컨테이너에 없으면
         [기존 로직을 호출해서 MemoryMemberRepository를 생성하고 스프링 컨테이너에 등록]
         return 반환
-    }
-  }
+        }
+        }
 
 ```
 
-  > * 즉 @Bean이 붙은 메소드마다 스프링 빈이 이미 존재하면 존재하는 빈을 반환, 없으면 생성해서 스프링 빈으로 등록하고 반환한다.
-  > * 이 덕분에 싱글톤이 보장된다.
+> * 즉 @Bean이 붙은 메소드마다 스프링 빈이 이미 존재하면 존재하는 빈을 반환, 없으면 생성해서 스프링 빈으로 등록하고 반환한다.
+> * 이 덕분에 싱글톤이 보장된다.
 
-  > * 참고로 AppConfig@CGLIB는 `AppConfig의 자식 타입`이므로 AppConfig타입으로 조회할 수 있다.
+> * 참고로 AppConfig@CGLIB는 `AppConfig의 자식 타입`이므로 AppConfig타입으로 조회할 수 있다.
 
 
 * #### @Configuration없이 @Bean만 적용하면?
   > * 출력 결과를 통해서 AppConfig가 CGLIB 기술 없이 `순수한 AppConfig로 스프링 빈에 등록`된 것을 확인할 수 있다.
   > * 또한 MemberRepository가 초기 예상대로 총 `3번 호출`된다.
   > * 인스턴스도 각각 다른 MemoryMemberRepository 인스턴스를 가지므로 `싱글톤이 지켜지지 않는다`.   
-  (왜냐하면 각각 실행되는 memberRepository()는 일반적인 `new로 객체가 생성되는것과 동일`하므로 스프링 컨테이너에 등록되지 않기 때문이다.)   
-  (따라서 각 `Service에 주입된 저장소들은 스프링 빈이 아니라 직접 new하여 구현체를 의존하는것과 동일한 상황`이 된다.)   
-  (만약 @Configuration을 없이 사용하고 싶다면 `@Autowired`를 사용하면 됨)
+      (왜냐하면 각각 실행되는 memberRepository()는 일반적인 `new로 객체가 생성되는것과 동일`하므로 스프링 컨테이너에 등록되지 않기 때문이다.)   
+      (따라서 각 `Service에 주입된 저장소들은 스프링 빈이 아니라 직접 new하여 구현체를 의존하는것과 동일한 상황`이 된다.)   
+      (만약 @Configuration을 없이 사용하고 싶다면 `@Autowired`를 사용하면 됨)
 
 
 **[ 정리 ]**
@@ -1263,7 +1263,7 @@
   > * `@Service` 스프링 비즈니스 로직에서 사용
   > * `@Repository` 스프링 데이터 접근 계층에서 사용
   > * `@Configuration` 스프링 설정 정보에서 사용   
-  (해당 클래스들의 설정 정보를 보면 `@Component를` 포함하고 있다)
+      (해당 클래스들의 설정 정보를 보면 `@Component를` 포함하고 있다)
 
   **[참고]** : 사실 어노테이션에는 `상속관계가 없다`. 따라서 어노테이션이 특정 어노테이션을 들고 있는 것을 인식할 수 있는것은
   자바 언어가 지원하는 기능이 아닌, `스프링이 지원하는 기능`이다.
@@ -1272,33 +1272,33 @@
 * #### 컴포넌트 스캔의 용도 뿐 아니라 다음 어노테이션이 있으면 스프링은 부가 기능을 수행한다.
   > * `@Controller` 스프링 `MVC 컨트롤러`로 인식
   > * `@Repository` 스프링 `데이터 접근 계층`으로 인식, 데이터 계층의 예외를 스프링 예외로 변환   
-  (데이터 계층의 예외를 스프링의 `추상화된 예외로 변경`해줌 : 특정DB의 예외가 터지면 서비스 계층까지 올라옴    
-  --> DB를 변경하면 예외 자체가 `변경`됨   
-  --> Repository계층의 A디비에서 B디비로 변경되어 `다른 예외`가 올라오면 서비스 계층, 다른계층의 코드가 흔들림    
-  --> 이런것들을 방지하기위해 스프링이 예외를 추상화해 반환함)
+      (데이터 계층의 예외를 스프링의 `추상화된 예외로 변경`해줌 : 특정DB의 예외가 터지면 서비스 계층까지 올라옴    
+      --> DB를 변경하면 예외 자체가 `변경`됨   
+      --> Repository계층의 A디비에서 B디비로 변경되어 `다른 예외`가 올라오면 서비스 계층, 다른계층의 코드가 흔들림    
+      --> 이런것들을 방지하기위해 스프링이 예외를 추상화해 반환함)
 
   > * `@Configuration` 스프링 설정 정보로 인식하고, 스프링 빈이 `싱글톤을 유지하도록 추가 처리`한다.
-  > *` @Service` 특별한 처리를 하지 않음, 대신 개발자들이 `핵심 비즈니스 로직`이 여기에 있다는 비즈니스 계층을 인식하는데 도움이 된다.
+      > *` @Service` 특별한 처리를 하지 않음, 대신 개발자들이 `핵심 비즈니스 로직`이 여기에 있다는 비즈니스 계층을 인식하는데 도움이 된다.
 
   **[참고] :** useDefaultFilters 옵션은 기본으로 켜져있는데, 옵션을 끄면 기본 스캔 대상들이 제외된다.
 
 
 * #### 헷갈릴 만한 사항 정리
   > * `ApplicationContext`가 바로 `스프링 자체`, ApplicationContext를 이용해 `특정 클래스 정보를 받아야 @ComponentScan이 가능`해짐   
-  @ComponentScan의 결과로 스프링빈을 스프링 컨테이너에 등록해야하는데, ApplicationContext가 없으면 등록할 `스프링 컨테이너 자체가 존재하지 않아짐`   
-  쉽게 이야기해 ApplicationContext가 본인의 스프링 컨테이너에 등록할 빈을 찾기위해 `@ComponentScan을 실행`한다고 이해하면 된다.
+      @ComponentScan의 결과로 스프링빈을 스프링 컨테이너에 등록해야하는데, ApplicationContext가 없으면 등록할 `스프링 컨테이너 자체가 존재하지 않아짐`   
+      쉽게 이야기해 ApplicationContext가 본인의 스프링 컨테이너에 등록할 빈을 찾기위해 `@ComponentScan을 실행`한다고 이해하면 된다.
 
-  > * 현재 core 프로젝트에 스프링 부트의 어플리케이션인 CoreApplication 내부에 `@SpringBootApplication`이 `프로젝트에 미치는 영향`은 없을까?   
+  > * 현재 core 프로젝트에 스프링 부트의 어플리케이션인 CoreApplication 내부에 `@SpringBootApplication`이 `프로젝트에 미치는 영향`은 없을까?
   > * 단순히 코드만 존재하고 사용하지 않아옴, CoreApplication을 동작하기 위해선 해당 클래스의 `main()을 호출`하거나 또는 테스트에서 `@SpringBootTest를 이용`해
-  부트와 통합하는 테스트를 진행해야 함
+      부트와 통합하는 테스트를 진행해야 함
   > * CoreApplication을 사용하면 부트가 내부에서 생성하는 ApplicationContext를 사용한다. `우리는 직접 스프링 코어인 ApplicationContext를 생성해 사용`했으므로
-  영향을 받는 부분은 없다.
+      영향을 받는 부분은 없다.
 
   > * `exclude`로 제외한 `@Configuration`이 있다. AutoAppconfig또한 마찬가지로 @Configuration 붙어있는데 exclude 안당하고 어떻게 돌아갈까?
   > * `new Annotation....(AutoAppConfig.class);`에 넣어주기 때문
 
   > * `@SpringBootAnnotation`은 `@ComponentScan`이 내부 코드에 들어가 있으므로 최상단에 위치해야함 그렇다면 CoreApplication은 어떻게 빈 등록이 될까?
-  내부에 `run메소드`로 `CoreApplication.class`를 넘겨주는데 부트가 이를가지고 `자동으로 해당 클래스를 빈으로 등록`
+      내부에 `run메소드`로 `CoreApplication.class`를 넘겨주는데 부트가 이를가지고 `자동으로 해당 클래스를 빈으로 등록`
 
 
 * #### Spring core vs Spring Boot 사용
@@ -1309,15 +1309,15 @@
     3. AutoAppConfig에 @ComponentScan을 찾고 @Component(@Controller, @Repository, @Service, @Configuration 포함)이 붙은 클래스를 스프링 컨테이너 빈으로 등록
 
 
-  **[Spring Boot]**
-  * 상황 1-1. @SpringBotApplication이 붙어있는 class의 `메인함수에서 실행`
-  * 상황 1-2. @SpringBootTest `테스트 실행` -> @SpringBootApplication 어노테이션을 찾아감
+**[Spring Boot]**
+* 상황 1-1. @SpringBotApplication이 붙어있는 class의 `메인함수에서 실행`
+* 상황 1-2. @SpringBootTest `테스트 실행` -> @SpringBootApplication 어노테이션을 찾아감
 
-  2. 스프링부트 내부에서 `자동으로` ApplicationContext(스프링 컨테이너)를 생성
+2. 스프링부트 내부에서 `자동으로` ApplicationContext(스프링 컨테이너)를 생성
 
-  3. @SpringBootApplication에는 `@ComponentScan이 포함`되어 있음.   
-      -> @Component(및 다른 스캔되는 어노테이션)이 달려있는 클래스를 스프링 컨테이너 빈으로 등록   
-      (@Configuration도 @Component가 내부적으로 포함되어 있으므로 달려있는 설정 클래스도 빈으로 컨테이너에 `등록`, 이 때 만약 @Bean이 있으면 이 또한 컨테이너에 빈으로 `등록`된다.)
+3. @SpringBootApplication에는 `@ComponentScan이 포함`되어 있음.   
+   -> @Component(및 다른 스캔되는 어노테이션)이 달려있는 클래스를 스프링 컨테이너 빈으로 등록   
+   (@Configuration도 @Component가 내부적으로 포함되어 있으므로 달려있는 설정 클래스도 빈으로 컨테이너에 `등록`, 이 때 만약 @Bean이 있으면 이 또한 컨테이너에 빈으로 `등록`된다.)
 
 <br>
 <br>
@@ -1330,24 +1330,24 @@
 
 **[TEST]**
 * #### 사용자 임의의 어노테이션 만들기
-  * > Annotation 파일을 만들고 기본적으로 3가지의 어노테이션을 붙여야 커스텀 어노테이션이 된다.
-    * `@Target(ElementType.TYPE)` : 해당 어노테이션이 사용되는 위치를 결정함(여기서는 TYPE을 이용)
-      * ElementType.TYPE은 클래스 / 인터페이스 / 열거 타입(enum)을 뜻한다.
-    * `@Retention(RetentinoPolicy.RUNTIME)` : Reflection을 사용하여 컴파일 이후에도 JVM에 의해 계속 참조가 가능함
-    * `@Documented` : JavaDoc 생성 시 Document에 포함되도록 함
+    * > Annotation 파일을 만들고 기본적으로 3가지의 어노테이션을 붙여야 커스텀 어노테이션이 된다.
+        * `@Target(ElementType.TYPE)` : 해당 어노테이션이 사용되는 위치를 결정함(여기서는 TYPE을 이용)
+            * ElementType.TYPE은 클래스 / 인터페이스 / 열거 타입(enum)을 뜻한다.
+        * `@Retention(RetentinoPolicy.RUNTIME)` : Reflection을 사용하여 컴파일 이후에도 JVM에 의해 계속 참조가 가능함
+        * `@Documented` : JavaDoc 생성 시 Document에 포함되도록 함
 
 * #### 컴포넌트 스캔 대상에 추가하고, 제외할 어노테이션 2개를 생성한다.
-  * > 각각 MyIncludeComponent, MyExcludeComponent로 생성
+    * > 각각 MyIncludeComponent, MyExcludeComponent로 생성
 
 * #### 테스트를 위한 임의의 빈 클래스 2개 생성
-  * > BeanA, BeanB생성 BeanA는 @MyIncludeComponent를, BeanB는 @MyExcludeComponent 어노테이션을 붙인다.
+    * > BeanA, BeanB생성 BeanA는 @MyIncludeComponent를, BeanB는 @MyExcludeComponent 어노테이션을 붙인다.
 
 * #### ComponentFilterAppConfigTest
-    > * 내부에 필터를 적용할 config 파일, ComponentFilterAppConfig를 static으로 선언하고,   
-    > * 설정 파일임을 알리기 위해 @Configuration을 붙인다.   
-    > * 또한 빈 생성을 위한 @ComponentScan도 붙이지만 내부에 include, excludeFilters에 커스텀 어노테이션을 알맞게 적용한다.
-    > ```java
-    > @Configuration
+  > * 내부에 필터를 적용할 config 파일, ComponentFilterAppConfig를 static으로 선언하고,
+  > * 설정 파일임을 알리기 위해 @Configuration을 붙인다.
+  > * 또한 빈 생성을 위한 @ComponentScan도 붙이지만 내부에 include, excludeFilters에 커스텀 어노테이션을 알맞게 적용한다.
+  > ```java
+    > @Configuration    // 컴포넌트 스캔도 사용하며 동시에 @Bean으로 수동 등록도 함께 사용하는 경우가 있어서 적음(없어도 정상 동작)
     > @ComponentScan(
     >         includeFilters = Filter(type = FilterType.ANNOTATION, classes = MyIncludeComponent.class),
     >         excludeFilters = Filter(type = FilterType.ANNOTATION, classes = MyExcludeComponent.class)
@@ -1355,29 +1355,29 @@
     > static class ComponentFilterAppConfig {
     > }
     > ```
-    > * 이후 ac.getBean("beanA", BeanA.class); 로직이 null이 아님을 증명하고   
-    > * ac.getBean("beanB", BeanB.class); 로직이 null임을 증명하는 테스트를 작성하게 되면   
-    > * 아래와 같은 사항을 검증 할 수 있다.   
-    >> 1. includeFilters 에 MyIncludeComponent 애노테이션을 추가해서 BeanA가 스프링 빈에 등록된다.   
-    >> 2. excludeFilters 에 MyExcludeComponent 애노테이션을 추가해서 BeanB는 스프링 빈에 등록되지 않는다.
+  > * 이후 ac.getBean("beanA", BeanA.class); 로직이 null이 아님을 증명하고
+  > * ac.getBean("beanB", BeanB.class); 로직이 null임을 증명하는 테스트를 작성하게 되면
+  > * 아래와 같은 사항을 검증 할 수 있다.
+  >> 1. includeFilters 에 MyIncludeComponent 애노테이션을 추가해서 BeanA가 스프링 빈에 등록된다.
+  >> 2. excludeFilters 에 MyExcludeComponent 애노테이션을 추가해서 BeanB는 스프링 빈에 등록되지 않는다.
 
 
 * #### FilterType의 옵션 5가지
-  1. `ANNOTATION` : 기본값, 어노태이션을 인식해서 동작한다.
-     * ex) org.example.SomeAnnotation
-  2. `ASSIGNABLE_TYPE` : 지정한 타입과 자식 타입을 인식해서 동작함   
-  (어노테이션이 아닌 클래스를 직접 지정할 수 있다.)
-     * ex) org.example.SomeClass
-  3. `ASPECTJ` : AspectJ 패턴 사용
-     * org.example..*Service+
-  4. `REGEX` : 정규 표현식
-     * org\.example\.Default.*
-  5. `CUSTOM`: TypeFilter 이라는 인터페이스를 구현해서 처리
-     * org.example.MyTypeFilter
-     
+    1. `ANNOTATION` : 기본값, 어노태이션을 인식해서 동작한다.
+        * ex) org.example.SomeAnnotation
+    2. `ASSIGNABLE_TYPE` : 지정한 타입과 자식 타입을 인식해서 동작함   
+       (어노테이션이 아닌 클래스를 직접 지정할 수 있다.)
+        * ex) org.example.SomeClass
+    3. `ASPECTJ` : AspectJ 패턴 사용
+        * org.example..*Service+
+    4. `REGEX` : 정규 표현식
+        * org\.example\.Default.*
+    5. `CUSTOM`: TypeFilter 이라는 인터페이스를 구현해서 처리
+        * org.example.MyTypeFilter
+
 <br><br>
 
-  * 만약 BeanA도 빼고 싶으면 다음과 같이 추가하면 된다.
+* 만약 BeanA도 빼고 싶으면 다음과 같이 추가하면 된다.
 ```java
     @ComponentScan(
         includeFilters = {
@@ -1396,21 +1396,54 @@
 > @Component의 기능이면 충분하므로, includeFilters를 사용할 일은 거의 없다. excludeFilters는 여러가지 이유로   
 > 간혹 사용할 때가 있지만 많지는 않음.   
 > 특히 최근 스프링 부트는 컴포넌트 스캔을 기본으로 제공해주는데, 옵션을 변경하면서 사용하기 보다는   
-> 스프링의 기본 설정에 최대한 맞추어 사용하는 것을 권장한다.
+> `스프링의 기본 설정에 최대한 맞추어 사용하는 것을 권장한다.`
 
+<br>
+<br>
+<br>
 
+### < --------------------------- 중복 등록과 충돌 --------------------------- >
+* 컴포넌트 스캔에서 같은 빈 이름을 등록하면 어떻게 될까? 다음과 같이 두가지의 상황이 존재한다.
+    1. 자동 빈 등록 vs 자동 빈 등록
+    2. 수동 빈 등록 vs 자동 빈 등록
 
+* #### 자동 빈 등록 vs 자동 빈 등록
+    * 컴포넌트 스캔에 의해 자동으로 스프링 빈이 등록되는데, 이름이 같은 경우 스프링은 오류를 발생시킴
+        * `ConflictingBeanDefinitionException` 예외 발생
 
+* #### 수동 빈 등록 vs 자동 빈 등록
+    * 임의로 AutoAppConfig에 @Bean을 이용해 수동 등록할 빈을 생성한다. (memoryMemberRepository)
+    * 이후 AutoAppConfigTest를 실행하면 Overriding bean definition for bean 'memoryMemberRepository' with a different definition: replacing
+    * 메시지의 의미는 수동 빈이 자동 빈을 `오버라이딩` 했다 왜? 수동 빈 등록이 `우선권`을 가지므로
+      > 개발자가 의도한 상황보다는 실무에선 여러 설정들이 꼬여서 위와같이 오버라이딩 되는 경우가 대부분이다.   
+      그렇게 되면 정말 잡기 어려운 버그가 발생됨(`애매한 버그`)   
+      최근 스프링 부트는 수동 빈 등록과 자동 빈 등록이 충돌나면 오류가 발생하도록 기본 값을 바꾸었다.
 
+* #### 수동 빈 등록, 자동 빈 오류시 스프링 부트 에러
+    > * Consider renaming one of the beans or enabling overriding by setting 
+        `spring.main.allow-bean-definition-overriding=true`   
+    > * 실제 CoreApplication을 실행해보면 볼 수 있다.
 
+    > resoutces/ 아래에 `application.properties`에 spring.main.allow-bean-definition-overriding=true 설정하면
+    기존의 스프링 처럼 수동 빈이 오버라이딩 된다.
+    >> @SpringBootApplication은 내부에 @ComponentScan을 가지고 있음, 따라서 이곳의 필터는 아무 설정도 없으므로
+    AppConfig의 bean들이 수동으로 등록되어 오버라이딩 된다.
+    <br><br>
+      `call AppConfig.memberRepository`   
+      `call AppConfig.memberService`   
+      `call AppConfig.orderService`
 
-
-
-
-
-
-
-
+* #### 왜 스프링 부트는 이런 결정을 내렸을까?
+  * 문제가 하도 많이 일어나서
+    > 개발은 명확하지 않은것은 하면 안된다.   
+    여러명의 개발자가 동시 개발하므로 애매한 상황을 만들면 안된다.
+  
+  * 예를들어 두 가지의 경우가 있다고 해보자
+    1. 코드가 줄어들고 이뻐지는 방향, 하지만 약간 불명확한 부분이 생김
+    2. 코드의 중복이 있지만 명확하고 한눈에 들어옴
+    > 이럴떄는 명확한것을 선택하는것이 대부분의 경우에서 낫다. 어설픈 추상화, 우선순위가 있으면
+    이런 곳에서 발생하는 버그가 정말 잡기 힘든 버그가 된다. (명확하게 하거나 빨리 오류를 발생시키거나)
+    
 
 
 

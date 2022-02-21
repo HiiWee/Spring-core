@@ -1,5 +1,8 @@
 package hello.core;
 
+import hello.core.member.repository.MemberRepository;
+import hello.core.member.repository.memory.MemoryMemberRepository;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
@@ -20,4 +23,9 @@ import org.springframework.context.annotation.FilterType;
 )
 public class AutoAppConfig {
 
+    // 자동 빈 등록 vs 수동 빈 등록 충돌 현상을 위한 Bean 생성
+    @Bean("memoryMemberRepository")
+    MemberRepository memberRepository() {
+        return new MemoryMemberRepository();
+    }
 }
