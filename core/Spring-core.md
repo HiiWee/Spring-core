@@ -1362,10 +1362,41 @@
     >> 2. excludeFilters 에 MyExcludeComponent 애노테이션을 추가해서 BeanB는 스프링 빈에 등록되지 않는다.
 
 
+* #### FilterType의 옵션 5가지
+  1. `ANNOTATION` : 기본값, 어노태이션을 인식해서 동작한다.
+     * ex) org.example.SomeAnnotation
+  2. `ASSIGNABLE_TYPE` : 지정한 타입과 자식 타입을 인식해서 동작함   
+  (어노테이션이 아닌 클래스를 직접 지정할 수 있다.)
+     * ex) org.example.SomeClass
+  3. `ASPECTJ` : AspectJ 패턴 사용
+     * org.example..*Service+
+  4. `REGEX` : 정규 표현식
+     * org\.example\.Default.*
+  5. `CUSTOM`: TypeFilter 이라는 인터페이스를 구현해서 처리
+     * org.example.MyTypeFilter
+     
+<br><br>
 
+  * 만약 BeanA도 빼고 싶으면 다음과 같이 추가하면 된다.
+```java
+    @ComponentScan(
+        includeFilters = {
+                @Filter(type = FilterType.ANNOTATION, classes =
+                        MyIncludeComponent.class),
+        },
+        excludeFilters = {
+                @Filter(type = FilterType.ANNOTATION, classes =
+                        MyExcludeComponent.class),
+                @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = BeanA.class)
+        }
 
+```
 
-
+**[참고]**
+> @Component의 기능이면 충분하므로, includeFilters를 사용할 일은 거의 없다. excludeFilters는 여러가지 이유로   
+> 간혹 사용할 때가 있지만 많지는 않음.   
+> 특히 최근 스프링 부트는 컴포넌트 스캔을 기본으로 제공해주는데, 옵션을 변경하면서 사용하기 보다는   
+> 스프링의 기본 설정에 최대한 맞추어 사용하는 것을 권장한다.
 
 
 
