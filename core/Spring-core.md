@@ -1319,15 +1319,47 @@
       -> @Component(및 다른 스캔되는 어노테이션)이 달려있는 클래스를 스프링 컨테이너 빈으로 등록   
       (@Configuration도 @Component가 내부적으로 포함되어 있으므로 달려있는 설정 클래스도 빈으로 컨테이너에 `등록`, 이 때 만약 @Bean이 있으면 이 또한 컨테이너에 빈으로 `등록`된다.)
 
+<br>
+<br>
+<br>
 
+### < --------------------------- 필터 --------------------------- >
 
+* #### `includeFilters` : 컴포넌트 스캔 대상을 추가로 지정한다.
+* #### `excludeFilters` : 컴포넌트 스캔에서 제외할 대상을 지정한다.
 
+**[TEST]**
+* #### 사용자 임의의 어노테이션 만들기
+  * > Annotation 파일을 만들고 기본적으로 3가지의 어노테이션을 붙여야 커스텀 어노테이션이 된다.
+    * `@Target(ElementType.TYPE)` : 해당 어노테이션이 사용되는 위치를 결정함(여기서는 TYPE을 이용)
+      * ElementType.TYPE은 클래스 / 인터페이스 / 열거 타입(enum)을 뜻한다.
+    * `@Retention(RetentinoPolicy.RUNTIME)` : Reflection을 사용하여 컴파일 이후에도 JVM에 의해 계속 참조가 가능함
+    * `@Documented` : JavaDoc 생성 시 Document에 포함되도록 함
 
+* #### 컴포넌트 스캔 대상에 추가하고, 제외할 어노테이션 2개를 생성한다.
+  * > 각각 MyIncludeComponent, MyExcludeComponent로 생성
 
+* #### 테스트를 위한 임의의 빈 클래스 2개 생성
+  * > BeanA, BeanB생성 BeanA는 @MyIncludeComponent를, BeanB는 @MyExcludeComponent 어노테이션을 붙인다.
 
-
-
-
+* #### ComponentFilterAppConfigTest
+    > * 내부에 필터를 적용할 config 파일, ComponentFilterAppConfig를 static으로 선언하고,   
+    > * 설정 파일임을 알리기 위해 @Configuration을 붙인다.   
+    > * 또한 빈 생성을 위한 @ComponentScan도 붙이지만 내부에 include, excludeFilters에 커스텀 어노테이션을 알맞게 적용한다.
+    > ```java
+    > @Configuration
+    > @ComponentScan(
+    >         includeFilters = Filter(type = FilterType.ANNOTATION, classes = MyIncludeComponent.class),
+    >         excludeFilters = Filter(type = FilterType.ANNOTATION, classes = MyExcludeComponent.class)
+    > )
+    > static class ComponentFilterAppConfig {
+    > }
+    > ```
+    > * 이후 ac.getBean("beanA", BeanA.class); 로직이 null이 아님을 증명하고   
+    > * ac.getBean("beanB", BeanB.class); 로직이 null임을 증명하는 테스트를 작성하게 되면   
+    > * 아래와 같은 사항을 검증 할 수 있다.   
+    >> 1. includeFilters 에 MyIncludeComponent 애노테이션을 추가해서 BeanA가 스프링 빈에 등록된다.   
+    >> 2. excludeFilters 에 MyExcludeComponent 애노테이션을 추가해서 BeanB는 스프링 빈에 등록되지 않는다.
 
 
 
