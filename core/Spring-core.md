@@ -1424,7 +1424,7 @@ public MemberRepository memberRepository() {
         `spring.main.allow-bean-definition-overriding=true`   
     > * 실제 CoreApplication을 실행해보면 볼 수 있다.
 
-    > resoutces/ 아래에 `application.properties`에 spring.main.allow-bean-definition-overriding=true 설정하면
+    > resources/ 아래에 `application.properties`에 spring.main.allow-bean-definition-overriding=true 설정하면
     기존의 스프링 처럼 수동 빈이 오버라이딩 된다.
     >> @SpringBootApplication은 내부에 @ComponentScan을 가지고 있음, 따라서 이곳의 필터는 아무 설정도 없으므로
     AppConfig의 bean들이 수동으로 등록되어 오버라이딩 된다.
