@@ -1161,13 +1161,12 @@ BeanFactory를 직접 사용하는 경우는 거의 없으므로, 일반적으�
   @Bean
 public MemberRepository memberRepository() {
         if (memoryMemberRepository가 이미 스프링 컨테이너에 등록되어 있으면?) {
-        return 스프링 컨테이너에서 찾아서 반환;
-
+            return 스프링 컨테이너에서 찾아서 반환;
         } else { //스프링 컨테이너에 없으면
-        [기존 로직을 호출해서 MemoryMemberRepository를 생성하고 스프링 컨테이너에 등록]
-        return 반환
+            [기존 로직을 호출해서 MemoryMemberRepository를 생성하고 스프링 컨테이너에 등록]
+            return 반환
         }
-        }
+}
 
 ```
 
@@ -1443,20 +1442,118 @@ public MemberRepository memberRepository() {
     2. 코드의 중복이 있지만 명확하고 한눈에 들어옴
     > 이럴떄는 명확한것을 선택하는것이 대부분의 경우에서 낫다. 어설픈 추상화, 우선순위가 있으면
     이런 곳에서 발생하는 버그가 정말 잡기 힘든 버그가 된다. (명확하게 하거나 빨리 오류를 발생시키거나)
+
+<br>
+<br>
+<br>
+
+### < --------------------------- 다양한 의존관계 주입 방법 --------------------------- >
+* ### 의존관계 주입은 크게 4가지 방법이 있다.
+  * 생성자 주입
+  * 수정자 주입(setter 주입)
+  * 필드 주입
+  * 일반 메서드 주입
+<br><br>
+* ### 생성자 주입
+  * 이름 그대로 생성자를 통해서 의존 관계를 주입받는 방법.
+  * 지금까지 우리가 진행한 방법임
+  * 특징
+    * 생성자 호출시점에 딱 `1번만 호출되는 것이 보장`된다.
+      * 따라서 첫 호출때 세팅하고 이후에 값을 변경하지 못하게 할 수 있다는 장점이 있다.
+    * **불변(딱 1번만 호출), 필수** 의존관계에 사용   
+    **[불편 의존관계]**
+      * 개발에서 불변은 매우 중요 : 좋은 개발 습관은 제약이 있는것(한계점, 제약) 다 열어두면 무엇을 수정해야할지 모름
+      * 어느 누구도 OrderServiceImpl내 의존객체들을 첫 호출 이후로 수정할 수 있는 방법이 없다.
+    * 불변 의존관계로 설정하면 필드들은 값이 꼭 있어야 하므로 final로 선언   
+    (**[필수 의존관계]** 생성자 파라미터로 인자가 반드시 들어와야 함, 따라서 인자로 들어오는 객체는 스프링 빈이어야 한다.)
+        ```java
+        // OrderServiceImpl's Fields
+        // 2.회원조회를 위한 필드 선언
+        private final MemberRepository memberRepository;
+        // 3. 할인적용을 위한 필드 선언
+        private final DiscountPolicy discountPolicy;
+        ```
+    **[중요 사항]**
+    * 생성자가 딱 1개만 있으면 @Autowired를 생략해도 자동 주입 된다. 물론 스프링 빈에만 해당한다.
+      * @Bean 혹은 @ComponentScan으로 등록해도 마찬가지다
+<br><br>
+* ### 수정자(Setter) 주입
+  > Setter주입을 하기 위해 임시로 final키워드를 제거한다*.
+  * setter라 불리는 필드의 값을 변경하는 수정자 메서드를 통해서 의존관계를 주입하는 방법   
+    (파라미터에 명시된 타입을 가지고 해당 타입으로 받을 수 있는 빈을 조회함)
+  * 특징
+    * **선택, 변경** 가능성이 있는 의존관계에 사용  
+      * **[선택 가능성]**
+        * 생성자 주입은 필수 값이지만, 수정자는 특정 의존성이 주입이 되지 않아도 사용할 수 있다.   
+          (선택적으로 의존성 주입)
+        * 선택적으로 주입하기 위해선 `@Autowired(required = false)`옵션을 주면 된다.   
+      * **[변경 가능성]**
+        * 중간에 인스턴스를 변경하고 싶으면 외부에서 강제로 호출할 수 있음(그럴일은 거의 없지만)
+    * 자바빈 프로퍼티 규약의 수정자 메서드 방식을 사용하는 방법
+    <br><br>
+  * 스프링 컨테이너는 크게 두가지 `Life Cycle`이 존재
+    * 스프링 빈을 모두 등록
+    * 의존관계를 자동으로 주입(@Autowired)
+      <br><br>
+  * 생성자 주입은 객체가 생성되고 빈을 등록하면서 주입도 `동시에` 이루어진다.
+    * 객체를 생성할때 생성자가 실행되고 @Autowired를 발견한 스프링이 동시에 의존성도 주입하기 떄문이다.
+      <br><br>
+  * 반면에 수정자 주입은 `객체 생성이 먼저`되고(스프링 빈 모두 등록) 이후 `의존관계를 자동으로 주입`하는 단계로 나뉜다.
+    * 수정자 주입시 주입되는 순서는 보장되지 않음(생성자 주입만 순서가 보장됨)
+      <br><br>
+  * 또한 이렇게 수정자를 이용하면 생성자가 필요 없어짐
+  
+<br><br>
+  
+**[참고]** : @Autowired의 기본 동작은 주입할 대상이 없으면 오류가 발생한다. 주입할 대상이 없어도 동작하게 하려면
+`@Autowired(required = false)`로 지정하면된다.`(선택 가능성)`
+
+**[참고]** : 자바빈 프로퍼티, 자바에서는 과거부터 필드의 값을 직접 변경하지 않고, setXxx, getXxx라는 메소드를 
+통해서 값을 읽거나 수정하는 규칙을 만들었는데, 그것이 자바빈 프로퍼티 규약이다.
+
+* ### 필드 주입
+  * 이름 그대로 필드에 바로 주입하는 방법이다.
+  * 특징
+    * 코드가 간결해서 많은 개발자들을 유혹하지만 외부에서 변경이 불가능해서 테스트 하기 힘들다는 치명적인 단점 존재.   
+      (스프링 없이 순수한 자바코드로 테스트 할 수 없음 : 생성자, 수정자가 없으므로 필드에 값 주입 불가)
+    * DI 프레임워크가 없으면 아무것도 할 수 없다. (생성자, 수정자가 없으므로 순수 자바코드로 주입 할 방법 없음)
+    * 사용하지 말자!
+    * 필드 주입이 사용되는 특수한 상황
+      * 애플리케이션의 실제 코드와 관계 없는 테스트 코드
+      * 스프링 설정을 목적으로 하는 @Configuration 같은 곳에서만 특별한 용도로 사용
+
+<br><br>
+**[참고]:** 순수한 자바 테스트 코드에는 당연히 @Autowired가 동작하지 않는다. `@SpringBootTest`처럼 스프링
+컨테이너를 테스트에 통합한 경우에만 가능하다.
+
+**[참고]:** 다음 코드와 같이 `@Bean`에서 파라미터에 의존관계는 자동 주입된다. 수동 등록시 자동 등록된 빈의
+의존관계가 필요할 때 문제를 해결할 수 있다.
+```java
+@Bean
+OrderService orderService(MemberRepository memberRepoisitory, DiscountPolicy
+        discountPolicy) {
+        new OrderServiceImpl(memberRepository, discountPolicy)
+        }
+```
+
+* ### 일반 메소드 주입
+  * 일반 메소드를 통해서 주입 받을 수 있다.
+  * 특징
+    * 한번에 여러 필드를 주입 받을 수 있다.
+    * 일반적으로 잘 사용하지 않는다.(생성자, 수정자 주입으로 해결할 수 있으므로)
+```java
+@Component
+public class OrderServiceImpl implements OrderService { 
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  private MemberRepository memberRepository;
+  private DiscountPolicy discountPolicy;
+  
+  @Autowired
+  public void init(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+    this.memberRepository = memberRepository;
+    this.discountPolicy = discountPolicy;
+  }
+}
+```
+**[참고]:** 당연한 이야기지만 의존관계 자동 주입은 스프링 컨테이너가 관리하는 스프링 빈이어야 동작한다.
+스프링 빈이 아닌 `Member`같은 클래스에서 `@Autowired` 코드를 적용해도 아무 기능도 동작하지 않는다.
