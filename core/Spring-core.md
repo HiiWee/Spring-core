@@ -1715,8 +1715,13 @@ public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discou
     private final DiscountPolicy discountPolicy;
   }
   ```
+<<<<<<< HEAD
   > 이전의 코드와 완전히 동일하며, 롬복이 자바의 애노테이션 프로세서라는 기능을 이용해서 컴파일 시점에 코드를
   > 자동으로 생성해준다. 실제 class를 열어보면 생성자 코드가 추가되어 있다.
+=======
+> 이전의 코드와 완전히 동일하며, 롬복이 자바의 애노테이션 프로세서라는 기능을 이용해서 컴파일 시점에 코드를
+> 자동으로 생성해준다. 실제 class를 열어보면 생성자 코드가 추가되어 있다.
+>>>>>>> c313b6d982877c57b468f2302145d8f0a748ec37
 
 **[정리]** : 최근에는 생성자를 딱 1개 두고, @Autowired를 생략하는 방법을 주로 이용한다. 여기에 Lombok라이브러리의
 `@RequiredArgsConstructor`를 함께 사용하면 기능은 전부 제공되지만, 코드는 깔끔하게 사용가능하다.
