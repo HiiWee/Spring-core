@@ -1576,3 +1576,129 @@ public class OrderServiceImpl implements OrderService {
   
 **[참고]** : `@Nullable`, `Optional`은 스프링 전반에 걸쳐서 지원된다. 예를들어 생성자 자동 주입에서 특정 필드에만 사용해도
 된다.
+
+<br>
+<br>
+<br>
+
+### < --------------------------- 생성자 주입을 선택해라! --------------------------- >
+* 과거에는 수정자 주입과 필드 주입을 많이 사용했지만, 최근에는 스프링을 포함한 DI프레임워크 대부분이 생성자 주입을 권장함
+이유는 아래와 같다.
+
+**[불변의 장점]**
+* 대부분의 의존관계 주입은 한번 일어나면 애플리케이션 종료시점까지 의존관계를 변경할 일이 없다.   
+  오히려 대부분의 의존관계는 애플리케이션 종료 전까지 변하면 안된다.(불변해야함)
+* 수정자 주입을 사용하면, setXxx 메소드를 public으로 열어두어야 한다.
+* 누군가 실수로 변경할 수 도 있고, 변경하면 안되는 메서드를 열어두는 것은 좋은 설계 방법이 아니다.
+* 생성자 주입은 객체를 생성할 때 딱 1번만 호출되므로 이후에 호출되는 일이 없다. 따라서 불변하게 설계할 수 있다.
+
+
+**[누락의 문제]**
+* 수정자 의존관계에서 프레임워크 없이 순수한 자바 코드를 단위 테스트 하는 경우에 문제가 발생
+
+```java
+public class OrderServiceImpl implements OrderService {
+  private MemberRepository memberRepository;
+  private DiscountPolicy discountPolicy;
+  
+  @Autowired
+  public void setMemberRepository(MemberRepository memberRepository) {
+    this.memberRepository = memberRepository;
+  }
+  
+  @Autowired
+  public void setDiscountPolicy(DiscountPolicy discountPolicy) {
+    this.discountPolicy = discountPolicy;
+  }
+//...
+}
+```
+* @Autowired가 프레임워크 안에서 동작할 때는 의존관계가 없으면 오류나지만, 지금은 순수한 자바 코드로만 단위테스트를 수행
+한다고 가정한다.   
+아래와 같이 테스트를 수행하면 런타임 에러인 NPE(NullPointException)문제가 발생한다.
+```java
+@Test
+void createOrder() {
+  OrderServiceImpl orderService = new OrderServiceImpl();
+  orderService.createOrder(1L, "itemA", 10000);
+}
+```
+* OrderServiceImpl은 내부적으로 MemberRepository, DiscountPolicy의 의존관계를 가지는데 주입이 누락됐기 때문
+
+> 위와 같은 문제를 생성자 주입을 이용하게 되면 제일 깔끔한 컴파일 오류가 발생한다.   
+  또한 IDE에서 바로 어떤 값을 필수로 주입해야 하는지 알 수 있다.
+
+* 아래의 테스트는 생성자 주입을 이용했을때 순수한 자바로 손쉽게 단위테스트를 작성할 수 있음을 보여준다.
+```java
+    @Test
+    void createOrder() {
+        // 테스트를 위한 더미 MemberRepository 객체를 생성한다.
+        MemoryMemberRepository memberRepository = new MemoryMemberRepository();
+        // 테스트를 위한 임의의 Member를 등록한다.
+        memberRepository.save(new Member(1L, "name", Grade.VIP));
+
+        // 생성자 주입을 이용해 OrderServiceImpl 객체를 생성함 여기서 new OrderServiceImp();를 이용하면 컴파일 오류 발생
+        OrderServiceImpl orderService = new OrderServiceImpl(memberRepository, new FixDiscountPolicy());
+        Order order = orderService.createOrder(1L, "itemA", 10000);
+
+        // 검증
+        assertThat(order.getDiscountPrice()).isEqualTo(1000);
+    }
+```
+
+**[final 키워드를 사용가능]**
+* 생성자 주입을 사용하면 필드에 `final`키워드를 사용할 수 있다. 그래서 생성자에 혹시라도 값이 설정되지 않게되면
+  컴파일 시점에서 알려주어 막아준다.
+
+```java
+@Component
+public class OrderServiceImpl implements OrderService {
+  private final MemberRepository memberRepository;
+  private final DiscountPolicy discountPolicy;
+@Autowired
+public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+  this.memberRepository = memberRepository;
+  // this.discountPolicy = discountPolicy; 생략
+}
+//...
+}
+```
+> 필수 필드인 discountPolicy의 값이 누락되었으므로 컴파일 오류가 발생함   
+> (컴파일 오류는 가장 빠르고 좋은 오류)
+
+**[참고]** : 수정자 주입을 포함한 나머지 주입 방식은 모두 생성자 이후에 호출되므로, 필드에 final 키워드를 사용 불가함
+오직 생성자 주입 방식만 `final` 키워드를 사용할 수 있다.
+
+**[정리]**
+* 생성자 주입 방식은 프레임워크에 의존하지 않고, `순수한 자바 언어`의 특징을 잘 살리는 방법이다.
+* 기본으로 생성자 주입을 사용하되, 필수 값이 아닌 경우에는 수정자 주입 방식을 `옵션`으로 부여하면 된다.(`동시 사용 가능`)
+* 항상 생성자 주입을 선택하자! 그리고 가끔 옵션이 필요할 경우 수정자 주입을 선택하자. 필드 주입은 지양하는것이 좋다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
