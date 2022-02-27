@@ -1769,8 +1769,32 @@ test {
   2. Preferences Annotation Processors 검색 Enable annotation processing 체크 (재시작)
   3. 임의의 테스트 클래스를 만들고 @Getter, @Setter 확인
 
+<br>
+<br>
+<br>
 
+### < --------------------------- 조회할 빈이 2개이상 - 문제 --------------------------- >
+* `@Autowired`는 타입(Type)으로 조회한다.
+* 따라서 아래와 같은 코드와 유사하게 동작한다. (실제로는 더 많은 기능 제공)
+  ```java
+  ac.getBean(DiscountPolicy.class)
+  ```
+* 스프링 빈 조회에서도 학습 했듯이 타입으로 조회하면 선택된 빈이 2개 이상일떄 문제가 발생한다.
+  * 따라서 기존에 RateDiscountPolicy만 @Component를 붙여 스캔했지만, 다른 타입인 FixDiscountPolicy도   
+  @Component를 붙여서 조회할 빈이 2개가 되도록 만든다.
 
+* 이후에 AutoAppConfigTest를 돌리게되면 NoUniqueBeanDefinitionException 예외(오류)가 발생한다. 
+  ```java
+  NoUniqueBeanDefinitionException: No qualifying bean of type 
+  'hello.core.discount.DiscountPolicy' available: expected single matching bean
+  but found 2: fixDiscountPolicy,rateDiscountPolicy
+  ```
+  (기대한 것은 싱글 매칭이지만 실제론 동일 타입 2개의 빈이 발견되었다는 오류)
+
+* 의존관계 자동주입시 하위타입 즉 구체클래스를 지정할 수 도 있지만, 이는 DIP를 위배하고 유연성이 떨어짐   
+ 또한 이름만 다르고, 완전히 똑같은 타입의 스프링 빈이 2개 있을때 해결되지 않는다.
+
+* 스프링 빈을 수동등록해도 되지만, 의존관계 자동주입(@Autowired)에서 해결하는 여러 방법이 존재한다.
 
 
 
