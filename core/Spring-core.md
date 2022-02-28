@@ -1796,23 +1796,123 @@ test {
 
 * 스프링 빈을 수동등록해도 되지만, 의존관계 자동주입(@Autowired)에서 해결하는 여러 방법이 존재한다.
 
+<br>
+<br>
+<br>
 
+### < --------------------------- @Autowired 필드 명, @Qualifier, @Primary --------------------------- >
+* 동일한 타입의 스프링 빈이 2개 이상 조회될 떄 해결방법
+  * @Autowired 필드, 파라미터 명 매칭방법
+  * @Qualifier -> @Qualifier끼리 매 -> 빈 이름 매칭
+  * @Primary 사용
 
+1. **@Autowired 필드 명 매칭**
+  * `@Autowired`는 타입 매칭을 시도하고, 이 떄 여러 빈이 있으면 필드이름, 파라미터 이름으로 빈 이름을 추가 매칭한다.   
+    (생성자 주입시 생성자의 파라미터 이름으로 구분하게 된다.)
+  * **필드 명 매칭은 먼저 타입 매칭을 시도하고, 그 결과에 여러 빈이 있을때 추가로 동작하는 기능이다.**
 
+  * @Autowired 매칭 정리
+    1. 타입 매칭
+    2. 타입 매칭의 결과가 2개 이상일 때 필드명, 파라미터 명으로 빈 이름 매칭
+<br><br>
+2. **@Qualifier 사용**
+    * `@Qualifier`는 추가 구분자를 붙여주는 방법이다. 주입 시 추가적인 방법을 제공하는 것이지 `빈 이름을 변경하는것은 아니다.`
 
+    * 빈 등록시 @Qualifier를 붙여준다.
+      ```java
+      @Component
+      @Qualifier("mainDiscountPolicy")
+      public class RateDiscountPolicy implements DiscountPolicy {}
+      ```
+      ```java
+      @Component
+      @Qualifier("fixDiscountPolicy")
+      public class FixDiscountPolicy implements DiscountPolicy {}
+      ```
 
+    * 생성자 자동 주입 예시
+      ```java
+      @Autowired
+      public OrderServiceImpl(MemberRepository memberRepository, 
+                        @Qualifier("mainDiscountPolicy") DiscountPolicy discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+      }
 
+      ```
+    * 수정자 자동 주입 예시
+      ```java
+      @Autowired
+      public void setDiscountPolicy(@Qualifier("mainDiscountPolicy") DiscountPolicy discountPolicy) {
+          this.discountPolicy = discountPolicy;
+      }
+      ```
+      **[참고]** : `@Qualifier`로 주입할 때 `@Qualifier("mainDiscountPolicy")` 를 못찾으면
+      mainDiscountPolicy라는 이름의 스프링 빈을 추가로 찾는다.    
+      하지만 경험상 @Qualifier 는 @Qualifier 를 찾는 용도로만 사용하는게 명확하고 좋다.
+    
+    * 또한 수동으로 빈을 직접 등록할 때도 @Qualifier를 동일하게 사용할 수 있다.
+      ```java
+      @Bean
+      @Qualifier("mainDiscountPolicy")
+      public DiscountPolicy discountPolicy() {
+        return new ...;
+      }
+      ```
+      
+    * **@Qualifier와 Lombok의 @RequiredArgsConstructor 같이 사용하기**
+      * java/main/에 `lombok.config` 생성
+      * `lombok.copyableAnnotations += org.springframework.beans.factory.annotation.Qualifier` 작성
+      * 재 빌드 후 아래와 같이 @Qualifier를 이용하면 사용할 수 있다.
+      ```java
+      @Component
+      // final이 붙은 필드를 가지고 매개인자가 있는 생성자를 자동으로 만들어준다. 또한 생성자가 1개면 @Autowired도 생략가능
+      @RequiredArgsConstructor
+      public class OrderServiceImpl implements OrderService {
+          private final MemberRepository memberRepository;
+          // 롬복의 @RequiredArgsConstructor와 @Qualifier 같이 사용하기
+          @Qualifier("mainDiscountPolicy")
+          private final DiscountPolicy discountPolicy;
+      ```
+      > Qualifier를 지우고 필드 이름을 mainDiscountPoilicy로 변경하는 것도 방법
+3. @Primary 사용
+    * `@Primary`는 우선순위를 정하는 방법, @Autowired 시에 여러 빈이 매칭되면 `@Primary`가 우선권을 가짐.   
+      (편하긴 하지만 한계점을 가진다.)
 
+    * rateDiscountPolicy가 우선권을 가져야 한다면 아래와 같이 이용 가능하다.
+   ```java
+   @Component
+   @Primary
+   public class RateDiscountPolicy implements DiscountPolicy {}
+   
+   @Component
+   public class FixDiscountPolicy implements DiscountPolicy {}
+   ```
+   > 이렇게 되면 생성자, 수정자는 수정할 코드가 없이 @Primary가 지정된 RateDiscountPolicy의 객체를 자동으로
+   > 주입받을 수 있다.
 
+    * 여기까지 보면 @Primary 와 @Qualifier 중에 어떤 것을 사용하면 좋을지 고민이 될 것이다.   
+      @Qualifier 의 단점은 주입 받을 때 다음과 같이 `모든 코드에` @Qualifier 를 붙여주어야 한다는 점이다.   
+      반면에 @Primary 를 사용하면 이렇게 @Qualifier 를 `붙일 필요가 없다`.
+<br><br>
+    * **@Primary, @Qualifier 활용**
+      > 코드에서 자주 사용하는 메인 데이터베이스의 커넥션을 획득하는 스프링 빈이 있고,   
+       코드에서 특별한 기능으로 가끔 사용하는 서브 데이터베이스의 커넥션을 획득하는 스프링 빈이 있다고 생각해보자.   
+       메인 데이터베이스의 커넥션을 획득하는 스프링 빈은 @Primary 를 적용해서 조회하는 곳에서   
+       @Qualifier 지정 없이 편리하게 조회하고, 서브 데이터베이스 커넥션 빈을 획득할 때는   
+       @Qualifier 를 지정해서 명시적으로 획득 하는 방식으로 사용하면 코드를 깔끔하게 유지할 수 있다.   
+       물론 이때 메인 데이터베이스의 스프링 빈을 등록할 때 @Qualifier 를 지정해주는 것은 상관없다.
 
+      * 즉 공통적으로 많이 사용되는 부분은 @Primary를 이용해 Default로 이용하면 편리하고,   
+      많이 사용되지 않는 서브 데이터베이스와 같은것들은 사용할때만 @Qualifier로 특정지어서 사용할 수 있다.   
+      다만 메인 데이터베이스의 스프링 빈을 등록할때 @Qualifier를 같이 지정해도 상관은 없다.
+<br><br>
+      * **@Primary와 @Qualifier의 우선순위**
+        * `@Primary`는 기본값 처럼 동작하고 `@Qualifier`는 좀 더 섬세하기 동작한다.   
+          이런경우 스프링은 자동보다 수동이, 넓은 범위의 선택권 보다는 좁은 범위의 선택권이 우선 순위가 높다.   
+          따라서 여기서도 `@Qualifier`가 우선순위가 높다.
 
-
-
-
-
-
-
-
+      * 롬복에서는 우선 주입을 원하는 구체 클래스에 @Primary를 붙이고 사용하면 된다.
 
 
 

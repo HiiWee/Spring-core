@@ -10,6 +10,7 @@ import hello.core.order.entity.Order;
 import hello.core.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,13 +18,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    // 2.회원조회를 위한 필드 선언
+
     private final MemberRepository memberRepository;
-    // 3. 할인적용을 위한 필드 선언
+    // 롬복 사용시 같이 사용 가능하다. @Qualifier("mainDiscountPolicy")
     private final DiscountPolicy discountPolicy;
 
+//    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+//        this.memberRepository = memberRepository;
+//        this.discountPolicy = discountPolicy;
+//    }
 
-    // 1. 주문생성(회원id, 상품명, 상품가격 인자로 넘겨줌)
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
         // 2. 회원 조회 (회원 저장소에서 memberId를 통해 Member객체를 받음)
