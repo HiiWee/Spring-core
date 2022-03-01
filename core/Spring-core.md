@@ -1973,12 +1973,86 @@ test {
    커스텀 애노테이션이 많으면 그것 자체가 부담이 될 수 있으므로 정말 중요하다고 판단되는 곳에 아주 일부에 한해서   
    부분적으로 적용하는 것을 권장한다.
 
+<br>
+<br>
+<br>
 
+### < --------------------------- 조회한 빈이 모두 필요할 때, List, Map --------------------------- >
+* 의도적으로 해당 타입의 스프링 빈이 전부 필요한 경우도 존재
+  * 할인 서비스를 제공할 때, 클라이언트(고객)가 할인의 종류(Rate, Fix)를 선택할 수 있다고 가정
+  * 스프링을 사용하면 소위 Strategy pattern을 간단하게 구현할 수 있다.
+```java
+    static class DiscountService {
+        private final Map<String, DiscountPolicy> policyMap;
+        private final List<DiscountPolicy> policies;
 
+        @Autowired  // 컬렉션 객체들도 자동주입이 가능하다. 일반적으로 Map은 key값으로 빈의 이름을, value로 객체를 삽입한다.
+        public DiscountService(Map<String, DiscountPolicy> policyMap, List<DiscountPolicy> policies) {
+            this.policyMap = policyMap;
+            this.policies = policies;
+            System.out.println("policyMap = " + policyMap);
+            System.out.println("policies = " + policies);
+        }
 
+        // Member객체와 가격, 정책코드를 넘겨주고 Map에서 알맞은 정책 코드를 이용해 실제 할인율을 넘겨주는 로직
+        public int discount(Member member, int price, String discountCode) {
+            DiscountPolicy discountPolicy = policyMap.get(discountCode);
 
+            System.out.println("discountCode = " + discountCode);
+            System.out.println("discountPolicy = " + discountPolicy);
 
+            return discountPolicy.discount(member, price);
+        }
+    }
+```
+> 할인정책서비스를 구현 Map을 이용해 모든 정책을 담아놓고 필요한 정책을 받아와서 실제 할인률을 계산하는 discount 메소드를 가짐
+```java
+public class AllBeanTest {
+    @Test
+    @DisplayName("해당 타입의 스프링 빈이 다 필요한 경우 : 클라리언트가 할인의 종류를 선택(fix, rate")
+    void findAllBean() {
+        // DiscountPolicy의 스프링 빈을 이용하기 위해 AutoAppConfig도 스프링 빈으로 등록
+        ApplicationContext ac = new AnnotationConfigApplicationContext(AutoAppConfig.class, DiscountService.class);
+        DiscountService discountService = ac.getBean(DiscountService.class);
+        Member member = new Member(1L, "userA", Grade.VIP);
+        // 임의의 멤버, 가격과 정책코드를 넘겨 실제 할인가를 받아옴
+        int discountPrice = discountService.discount(member, 10000, "fixDiscountPolicy");
 
+        // fix정책은 무조건 1000원 할인임을 검증
+        assertThat(discountPrice).isEqualTo(1000);
+        assertThat(discountService).isInstanceOf(DiscountService.class);
+
+        // rate정책은 10%할인율이 적용됨을 검증
+        discountPrice = discountService.discount(member, 20000, "rateDiscountPolicy");
+        assertThat(discountPrice).isEqualTo(2000);
+    }
+}
+```
+> 고객이 할인 정책을 직접 선택해서 실제 할인률을 받아와 검증하는 테스트
+
+* **[로직 분석]**
+  * DiscountService는 `Map`으로 `모든 DiscountPolicy`를 주입 받음(fixDiscountPolicy, rateDiscountPolicy)
+  * `discount()` 메서드는 discountCode로 "fix, rateDiscountPolicy"중 하나가 넘어오면 Map에서 알맞은 `스프링 빈`을
+  찾아서 실행한다.
+<br><br>
+* **[주입 분석]**
+  * `Map<String, DiscountPolicy>` Map의 키에 스프링 빈의 이름을 넣어주면 값으로 `DiscountPolicy`값으로 조회한 모든
+  스프링 빈을 담아준다.
+  * `List<DiscountPolicy>`는 DiscountPolicy타입으로 조회환 모든 스프링 빈을 담음.
+  * 해당하는 타입의 스프링 빈이 없다면, `빈 컬렉션`이나 `Map`을 주입한다.
+<br><br>
+
+* **[참고 - 스프링 컨테이너를 생성하면서 스프링 빈 등록하기]**
+  * 스프링 컨테이너는 생성자에 클래스 정보를 받음, 여기에 클래스 정보를 넘기면 해당 클래스가 스프링 빈으로 자동 등록된다.
+  * `new AnntationConfigApplicationContext(AutoAppConfig.class, DiscountService.class);`
+    * 위 코드는 2가지로 이해할 수 있다.
+      1. new AnnotationConfigApplicationContext();를 통해 스프링 컨테이너를 생성
+      2. AutoAppConfig.class, DiscountService.class를 파라미터로 넘기면서 해당 클래스를 자동으로 스프링 빈으로 등록
+  <br><br>
+  * 정리하게 되면 스프링 컨테이너를 자동생성과 동시에, 해당 컨테이너에 AutoAppConfig, DiscountService를 스프링 빈으로
+  자동 등록한다.
+  * 또한 내부에 ComponentScan이나 Configuration을 만나면 스캔을하며 빈을 자동 등록하거나 @Bean을 이용해 수동 빈 등록도
+  진행하게 된다.
 
 
 
