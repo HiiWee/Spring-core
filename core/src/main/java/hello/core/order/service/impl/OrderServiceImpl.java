@@ -1,5 +1,6 @@
 package hello.core.order.service.impl;
 
+import hello.core.annotation.MainDiscountPolicy;
 import hello.core.discount.DiscountPolicy;
 import hello.core.discount.fix.FixDiscountPolicy;
 import hello.core.discount.rate.RateDiscountPolicy;
@@ -20,10 +21,11 @@ public class OrderServiceImpl implements OrderService {
 
 
     private final MemberRepository memberRepository;
-    // 롬복 사용시 같이 사용 가능하다. @Qualifier("mainDiscountPolicy")
+    @MainDiscountPolicy  // 롬복 사용시 같이 사용 가능하다, 다만 커스텀 어노테이션이므로 롬복 설정에 @MainDiscountPolicy도 추가해야한다.
     private final DiscountPolicy discountPolicy;
 
-//    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+//    @Autowired
+//    public OrderServiceImpl(MemberRepository memberRepository, @MainDiscountPolicy DiscountPolicy discountPolicy) {
 //        this.memberRepository = memberRepository;
 //        this.discountPolicy = discountPolicy;
 //    }

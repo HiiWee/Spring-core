@@ -1914,6 +1914,110 @@ test {
 
       * 롬복에서는 우선 주입을 원하는 구체 클래스에 @Primary를 붙이고 사용하면 된다.
 
+<br>
+<br>
+<br>
+
+### < --------------------------- Annotation 직접 만들기 --------------------------- >
+* `@Qualifier("mainDiscountPolicy)` 이렇게 문자를 적으면 컴파일시 타입 체크가 안된다.   
+  따라서 다음과 같은 애노테이션을 만들어서 문제를 해결 할 수 있다.
+  ```java
+  @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+  @Retention(RetentionPolicy.RUNTIME)
+  @Documented
+  @Qualifier("mainDiscountPolicy")
+    public @interface MainDiscountPolicy {
+  }
+  ```
+  ```java
+  //생성자 자동 주입
+  @Autowired
+  public OrderServiceImpl(MemberRepository memberRepository,
+  @MainDiscountPolicy DiscountPolicy discountPolicy) {
+    this.memberRepository = memberRepository;
+    this.discountPolicy = discountPolicy;
+  }
+  //수정자 자동 주입
+  @Autowired
+  public void setDiscountPolicy(@MainDiscountPolicy DiscountPolicy
+  discountPolicy) {
+    this.discountPolicy = discountPolicy;
+  }  
+  ```
+
+  
+* 미리 정의 해놓은 @MainDiscountPolicy를 이용하면 내부적으로 @Qualifier("mainDiscountPolicy)가 있으므로 동일하게 사용 가능하다.
+* 또한 여러곳에서 사용할 때 오류 확률을 줄여주고, 추가로 이름 변경이 필요할 때 한곳에서 변경하면 해결된다는 장점도 가진다.
+
+**[정리]** : 애노테이션은 상속이라는 개념이 없다. 이렇게 여러 애노테이션을 모아서 사용하는 기능은 스프링이 제공해주는 기능이다.   
+@Qualifier 뿐만 아니라 다른 애노테이션들도 함꼐 조합해 사용 가능하다.   
+또한 @Autowired도 재 정의 할 수 있지만, 스프링이 제공하는 기능을 뚜렷한 목적없이 무분별하게 재정의 하는 행위는   
+유지보수에 더욱 혼란만 가중 시킬 수 있으니 유의하자.
+
+
+**[알아두기]**    
+1. @Qualifier 자체에   @Target, @Retention, @Documented 어노테이션이 있으니 생략해도 괜찮지 않을까?
+  > 자바 애노테이션은 언어적으로 내부의 애노테이션이 포함되어도 그 부분이 적용되지 않음.   
+    하지만, 스프링이 일부 포함된 애노테이션을 추가로 읽어서 가능하게 도와주는 것이다.
+    자바 애노테이션은 자바 언어가 컴파일 되는 시점에 적용되는 부분이 있고, 스프링을 사용하며 적용하는 부분이 존재.   
+    여기서 위의 애노테이션들은 자바 언어가 컴파일 할 때 사용하는 애노테이션이므로 내부에 포함해도(@Qualifier안에)
+    적용이 되지 않는다.
+2. @RequiredArgsConstructor와 커스텀 애노테이션(@MainDiscountPolicy) 같이 이용하기
+  > 이전에 @Qualifier와 @RequiredArgsConstructor를 같이 이용하기 위해서 lombok.config에 설정을 추가했다.   
+    @MainDiscountPolicy는 새로운 어노테이션을 만든것이므로 같이 이용하기 위해선   
+    lombok.copyableannotations 설정을 추가해야한다.   
+    `lombok.copyableannotations += hello.core.annotation.MainDiscountPolicy`
+3. 커스텀 애노테이션의 권상 사항
+   > 애노테이션을 만들면 코드로 추적할 수 있다는 장점이 있다. 하지만 대부분의 문제들은 커스텀 애노테이션 없이   
+   @Qualifier, @Primary등 만 사용해도 문제를 해결 할 수 있다.   
+   커스텀 애노테이션이 많으면 그것 자체가 부담이 될 수 있으므로 정말 중요하다고 판단되는 곳에 아주 일부에 한해서   
+   부분적으로 적용하는 것을 권장한다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
