@@ -1,6 +1,9 @@
 package hello.core.lifecycle;
 
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 // 간단한 외부 네트워크에 미리 연결하는 객체 (단순 문자열 출력)
 public class NetworkClient {
 
@@ -30,6 +33,7 @@ public class NetworkClient {
     }
 
     // 의존관계 주입이 끝나면 호출해 주는 메소드 : 초기화 콜백
+    @PostConstruct
     public void init() {
         System.out.println("NetworkClient.init");
         connect();
@@ -37,6 +41,7 @@ public class NetworkClient {
     }
 
     // 빈이 종료될 때 호출된다. : 소멸전 콜백
+    @PreDestroy
     public void close() {
         System.out.println("NetworkClient.close");
         disconnect();
