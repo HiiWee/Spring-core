@@ -2292,6 +2292,132 @@ PrototypeBean HelloBean() {
   * 종료 메서드 호출 X
   * 프로토타입빈은 빈을 조회한 클라이언트가 관리, 종료 메서드 호출도 클라이언트가 직접 해야함
 
+<br>
+<br>
+<br>
+
+### < --------------------------- 프로토타입 스코프 - 싱글톤 빈과 함꼐 사용시 문제점 --------------------------- >
+* 스프링 컨테이너에 프로토타입 스코프의 빈을 요청하면 항상 새로운 객체 인스턴스를 생성해서 반환한다.   
+  하지만, 싱글톤 빈과 함꼐 사용할 때는 의도한 대로 잘 동학하지 않으므로 주의해야함.
+
+<br><br>
+* 스프링 컨테이너에 프로토타입 빈 직접 요청 예시1 hello.core.scope.SingletonWithPrototypeTest1의 prototypeFind()
+  1. 클라이언트A -> 스프링 컨테이너에 프로토타입 빈 요청
+  2. 스프링 컨테이너는 프로토타입 빈 새로 생성후 반환(x01) -> 해당 빈의 count 필드 값은 0
+  3. 클라이언트는 조회한 프로토타입 빈에 addCount() 호출하여 count 필드를 +1 증가
+  4. 결과적으로 프로토타입 빈(x01)의 count값은 1이 된다.
+> 위와 같은 작업은 여러번 반복해도 항상 새로운 프로토타입 빈이 생성되므로 각 클라이언트마다 count를 관리할 수 있다.
+
+<br><br>
+* 싱글톤 빈에서 프로토타입 빈 사용 hello.core.scope.SingletonWithPrototypeTest1의 singletonClientUserPrototype()
+  * 이번에는 `clientBean`이라는 싱글톤 빈이 의존관계 주입을 통해서 프로토타입 빈을 주입받아 사용하는 예를 보자
+  * `clientBean`은 싱글톤, 따라서 스프링 컨테이너와 같이 생성되고 의존관계 주입 발생
+  1. `clientBean`은 의존관계 자동주입으로 프로토타입 빈을 요청
+  2. 스프링 컨테이너는 프로토타입 빈을 생성해 `clientBean`에 반환
+  3. `clientBean` 내부 필드에 프로토타입 빈의 참조값을 보관함
+> 만약 다른 클라이언트가 스프링 컨테이너에 `clientBean`을 요청하게 되면 싱글톤이므로 기존의 클라이언트와   
+> 동일한 `clientBean`이 반환된다.   
+> 즉, `clientBean`이 내부에 가지고 있는 프로토타입 빈은 과거에 주입이 끝난 빈이다.   
+> 주입 시점에 스프링컨테이너에 요청해 새로 생성된 것이지, 새로운 클라이언트가 사용할 때마다 새로 생성되지 않음   
+> 즉 클라이언트들은 count라는 필드를 공유필드와 같이 사용하게 되는것이다.
+
+<br>
+
+* 스프링은 일반적으로 싱글톤 빈을 사용한다.(주로 싱글톤빈이 프로토타입빈 이용하는 양상)   
+  이는 생성 시점에만 의존관계를 주입받는다.   
+  떄문에 프로토타입 빈이 새로 생성되지만, 싱글톤 빈과 함꼐 유지되는것이 문제가 된다.
+
+* 하지만 우리가 원하는것은 프로토타입 빈을 주입 시점에 생성되고 유지하는것이 아닌   
+  사용할 때마다 새로 생성하는 것이다.
+> ApplicationContext를 @Autowired로 주입받아서 logic()내에서 호출때마나 getBean(PrototypeBean.class)를   
+> 아래 코드와 같이 이용하는 방법도 있지만, 이는 코드가 상당히 지저분해짐
+```java
+class ClientBean { 
+    private final PrototypeBean prototypeBean;
+    
+    @Autowired
+    ApplicationContext applicationContext;
+    
+    public int logic() {
+        // 프로토타입 스코프인 빈에 대해서는 getBean시 내부적으로 빈을 새로 생성하고 그 빈을 반환하게 된다.
+        PrototypeBean prototypeBean = applicationContext.getBean(PrototypeBean.class);
+        prototypeBean.addCount();
+        return prototypeBean.getCount();
+    }
+}
+/**
+ * @Autowired는 스프링 빈도 찾아주지만, 
+ * 위와같은 ApplicationContext 같은 것도 편리하게 찾을 수 있는 부가 기능도 함께 제공합니다.
+ * */
+```
+<br>
+
+> **참고** : 여러 빈에서 프로토타입 빈을 주입받으면, 주입 받는 시점에 각각 새로운 프로토타입 빈이 생성된다.   
+> clientA, clientB가 각각 의존관계 주입을 받으면 각각 다른 인스턴스의 프로토타입 빈을 주입 받음   
+> 하지만 사용할 때마다 새로 생성되는 것이 아닌 `주입 받는 시점`에서만 적용된다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
