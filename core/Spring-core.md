@@ -2507,26 +2507,87 @@ class ClientBean {
   > 라이프 사이클은 HTTP request의 요청이 들어오고 나갈 때 까지는 `같은 인스턴스`가 관리된다.
   > 이후 특정 요청의 응답을 하게되면 destroy 된다.
 
+<br>
+<br>
+<br>
 
+### < --------------------------- request 스코프 예제 만들기 --------------------------- >
+#### [웹 환경 추가]
+* 웹 스코프는 웹 환경에서만 동작하므로 web 라이브러리 추가해야함
+  * **build.gradle** : implementation 'org.springframework.boot:spring-boot-starter-web'
+* 이후 `hello.core.CoreApplication`을 실행하면 웹 애플리케이션이 실행된다.
+> **참고:** `spring-boot-starter-web`라이브러리를 추가하면 스프링 부트는 내장 톰켓 서버를 활용해   
+> WAS와 스프링을 함께 실행한다.   
+> 
+> **참고:** 스프링 부트는 웹 라이브러리가 없으면 AnnotationConfigApplicationContext를 기반으로   
+> 애플리케이션을 구동하지만, 웹 라이브러리가 추가되면 AnnotationConfigServletWebServerApplicationContext를   
+> 기반으로 애플리케이션을 구동한다.(웹 라이브러리가 추가되면 웹과 관련된 추가 설정과 환경들이 필요하므로)
 
+* 8080포트를 다른곳에서 사용중이면 application.preperties에 server.port=9090으로 변경
+<br><br>
 
+#### [request 스코프 예제 개발]
+* 동시에 여러 HTTP 요청이 오면 정확히 어떤 요청이 남긴 로그인지 구분하기 어려움   
+  이럴때 사용하기 좋은것이 바로 request scope다.
+* 아래와 같이 로그가 남도록 request 스코프를 활용해보자
+  ```
+  [d06b992f...] request scope bean create
+  [d06b992f...][http://localhost:8080/log-demo] controller test
+  [d06b992f...][http://localhost:8080/log-demo] service id = testId
+  [d06b992f...] request scope bean close
+  ```
+  * 기대하는 공통 포멧 : [UUID][requestURL]{message}
+  * UUID를 사용해서 HTTP 요청을 구분하자
+  * requestURL정보도 추가로 넣어 어떤 URL을 요청해 남은 로그인지 확인하기
+<br><br>
 
+**MyLogger.java**   
+* 로그를 출력하기 위한 `MyLogger` 클래스
+* `@Scope(value = "request")`를 사용해 request scope로 지정함, 따라서 myLogger빈은 HTTP 요청 당 하나씩 생성되고   
+  HTTP 요청이 끝나는 시점에 소멸된다.
+* 빈이 생성되는 시점에 자동으로 `@PostConstruct`초기화 메서드를 사용해 uuid를 랜덤생성해 저장함   
+  myLogger빈은 HTTP 요청당 하나씩 생성되므로, 저장한 uuid를 통해 다른 HTTP 요청과 구분할 수 있는 id가 된다.
+* myLogger 빈이 소멸되는 시점에 `@PreDestroy`를 사용해 종료메시지를 남긴다.
+* `requestURL`은 빈이 생성되는 시점에는 알 수 없으므로, 외부에서 setter로 입력 받는다.
+<br><br>
 
+**LogDemoController.java**
+* Logger가 잘 작동하는지 확인하는 테스트용 컨트롤러
+* `HttpServletRequest`를 통해 요청 URL을 받아옴 (requestURL : http://localhost:8080/log-demo)
+* requestURL을 myLogger빈에 저장한다. HTTP요청당 각각 구분되므로 다른 HTTP요청 떄문에 myLogger에 저장된 값이
+  섞이지 않음
+* 컨트롤러에서 controller test 라는 로그를 남긴다.
 
+> **참고:** requestURL을 MyLogger에 저장하는 방법은 컨트롤러에서 처리하는것 보다 공통처리가 가능한   
+> `스프링 인터셉터`, `서블릿 필터` 같은 곳을 활용하는것이 바람직함
+<br><br>
 
+**LogDemoService.java**   
+* 비즈니스 로직이 있는 서비스 계층도 로그를 출력
+* 만약 request scope가 아닌 파라미터로 모든 정보를 서비스 계층에 넘긴다면 코드가 지저분해짐   
+  더 나아가 requestURL같은 웹과 관련된 정보가 `웹과 관련 없는 서비스 계층`까지 넘어가게 된다.   
+  웹과 관련된 부분은 `컨트롤러`까지만 사용하는것이 바람직하다.   
+  `서비스 계층은 웹 기술에 종속되지 않고`, 가급적 순수하게 유지하는 것이 유지보수 관점에서 바람직하다.
+<br><br>
 
+**기대되는 출력이 아닌 애플리케이션 실행 시점에서의 오류 발생**   
+```
+Error creating bean with name 'myLogger': Scope 'request' is not active for the 
+current thread; consider defining a scoped proxy for this bean if you intend to 
+refer to it from a singleton;
+```
 
+> LogDemoController는 스프링 컨테이너가 생성될때 myLogger빈을 의존관계 자동주입을 통해 주입 해야한다.   
+> 하지만 myLogger 빈이 존재하지 않아서 주입을 할 수 가 없다. 왜?   
+> MyLogger는 `request scope`이다. 즉 생`명주기가 고객의 요청(HTTP request)이 들어오고 응답하는 부분`까지이고   
+> 그 사이에 스프링 컨테이너에게 myLogger를 달라고 해야한다.   
+> 하지만 현재는 스프링 컨테이너가 생성되는 시점은 HTTP request 요청 자제가 없으므로 myLogger빈도 존재하지 않는다.   
+> 따라서 위의 오류가 발생한다 (request scope가 활성화 되지 않았다는 오류)
 
-
-
-
-
-
-
-
-
-
-
+**정리:** 스프링 애플리케이션을 실행하는 시점에 싱글톤 빈은 생성해서 주입이 가능하지만,   
+request scope 빈은 아직 생성되지 않는다. 따라서 실제 고객의 요청이 와야 생성할 수 있다.   
+스프링 컨테이너에게 myLogger빈을 달라는 단계를 의존단계 주입 단계가 아니라   
+**실제 고객의 요청이 왔을때로 지연**시켜야 한다. (`Provider`를 이용해 문제를 해결할 수 있다.)
 
 
 
