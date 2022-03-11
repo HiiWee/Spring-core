@@ -2589,16 +2589,34 @@ request scope 빈은 아직 생성되지 않는다. 따라서 실제 고객의 �
 스프링 컨테이너에게 myLogger빈을 달라는 단계를 의존단계 주입 단계가 아니라   
 **실제 고객의 요청이 왔을때로 지연**시켜야 한다. (`Provider`를 이용해 문제를 해결할 수 있다.)
 
+<br>
+<br>
+<br>
 
+### < --------------------------- 스코프와 Provider --------------------------- >
+* 첫 번째 해결방안 : Provider 사용
+  * ObjectProvider를 사용해보자.
+  
+* 기존에 MyLogger를 직접 의존관계를 주입받는 것은 스프링 컨테이너 생성당시에는 request의 요청이 없으므로   
+  request scope의 객체가 생성되지 않아 주입받을 수 없다.
+* 따라서 ObjectProvider를 이용해 실제 request 요청이 들어왔을때 getObject()해오는 방법으로 해결할 수 있다.
+<br><br>
 
+* MyLogger를 직접 주입받는 코드에서 ObjectProvider로 조회하는 방법으로 코드를 변경하고 나면
+  * `ObjectProvider` 덕분에 `ObjectProvider.getObject()`를 호출하는 시점까지 **request scope 빈의 조회를 통해   
+  스프링 컨테이너에게 요청하는것을 지연**할 수 있다.   
+  (이렇게 되면 request scope이므로 요청시 생성된다. 즉, 빈의 생성도 덩달아 지연된다.)
+  * `ObjectProvider.getObject()`를 호출하는 시점에는 HTTP 요청이 진행주으 따라서 request scope 빈의 생성이   
+    정상 처리됨.
+  * `ObjectProvider.getObject()`를 `LogDemoController`, `LogDemoService`에서 각각 한번씩 **따로 호출해도   
+    같은 HTTP 요청이면 같은 스프링 빈이 반환됨**
+  * localhost창을 여러번 호출해도 **서로 다른 요청은 각각 요청에 맞게 구분되어 로그가 찍히는것을 볼 수 있다**.   
+    (Thread를 이용해 service 로그를 찍기전 1초 sleep을 시켜도 로그는 섞이지만 각각의 request 호출 로그들은   
+    올바른 순서대로 찍히는것을 볼 수 있다.)
 
-
-
-
-
-
-
-
+    
+> 하지만 이전시간에 오류났던 코드처럼 사용할 수 있는 방법이 있다. (코드양을 줄이기 위해)   
+  **프록시를 사용하면 됨** 
 
 
 
