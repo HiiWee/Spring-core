@@ -27,3 +27,77 @@ Study Spring basic
   * 스프링 부트는 정적 컨텐츠를 기본적으로 지원해준다. (main/resources/static/*)
     * 폴더내 hello-static.html이 존재하면 서버 실행 후 http://localhost:8080/hello-static.html에 접속하면   
       볼 수 있다. 원하는 파일을 넣으면 되지만 이곳에는 어떤 프로그래밍을 할 수 는 없고 그대로 반환된다.
+
+
+
+## [MVC와 템플릿 엔진]
+
+* MVC : Model, View, Controller
+  * 과거에는 Controller와 View가 분리되어 있지 않았음 --> Model 1 방식(JSP)
+  * 현재는 View와 Controller를 분리함
+    * 관심사를 분리해야함(역할과 책임)
+    * 따라서 View는 화면을 그리는것에 모든 역량을 집중해야 한다.
+    * Controller나 Model관련 있는 부분은 비즈니스 로직이나 내부적인걸 처리하는것에 집중해야한다.
+    * 그리고 Model에 View에 필요한 데이터를 담아 View로 넘겨주는 패턴을 많이 사용한다.
+
+* 타입리프의 장점
+  * 파일을 우측클릭해 copy path시 absolute path를 복사하면 html을 서버없이 바로 열어봐도 html파일을 볼 수 있음.
+
+* @RequestParam
+  * required가 기본으로 true임 따라서 url에 값을 넣지 않고 mapping된 url만 조회하면 오류 발생
+
+
+```java
+    @GetMapping("hello-mvc")
+    public String helloMvc(@RequestParam(value = "name") String name, Model model) {
+        model.addAttribute("name", name);
+        return "hello-template";
+    }
+```
+> 먼저 localhost:8080/hello-mvc?name=spring!! 으로 입력시 Spring boot 내장 톰켓 서버를 거친다.   
+> 내장 톰켓 서버에선 스프링에게 hello-mvc를 던져주고 스프링은 매핑정보를 확인해 위 메소드를 호출한다.   
+> 이후 @RequestParam으로 받은 name의 값(spring!!)을 Model에 담고 return 값 "hello-template"을 스프링에게 반환   
+> 스프링의 viewResolver에서 return값과 동일한 templates/hello-template.html을 찾아서 Thymeleaf 템플릿 엔진에게 처리를 맡김   
+> Thymeleaf 템플릿 엔진은 이를 받아서 렌더링 하고 변환한 html을 웹 브라우저에 반환해준다. (정적 컨텐츠와의 차이)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
