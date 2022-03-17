@@ -128,8 +128,8 @@ Study Spring basic
 * **[정리]**
   * `정적 컨텐츠` : 파일을 그대로 내려준다. 
   * `MVC와 템플릿 엔진` : 템플릿 엔진을 MVC방식으로 쪼개고, View를 템플릿 엔진으로 html을 프로그래밍
-  이후 고객에게 렌더링된 html을 전달한다.해 렌더링,   
-  * `API` : 일반적으로 말하는 api방식은 @ResponseBody를 사용하고 객체를 반환하는 것이다.   
+  이후 고객에게 렌더링된 html을 전달한다.  
+  * `API` : 일반적으로 말하는 api방식은 @ResponseBody를 사용하고 객체를 반환(return 객체)하는 것이다.   
     `MappingJackson2HttpMessageConverter`를 이용해 Json으로 변경해 반환함   
     view없이 바로 HTTP response에 값을 넣어서 반환한다.
 
