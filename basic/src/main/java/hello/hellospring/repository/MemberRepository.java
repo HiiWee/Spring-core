@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository {
-    Member sava(Member member);
+    Member save(Member member);
     // 자바 8의 기능
     Optional<Member> findById(Long id);
     Optional<Member> findByName(String name);
-    List<Member> finaAll();
+    List<Member> findAll();
 }

@@ -11,7 +11,7 @@ public class MemoryMemberRepository implements MemberRepository {
     private static long sequence = 0L;  // key값을 생성해줌
 
     @Override
-    public Member sava(Member member) {
+    public Member save(Member member) {
         // 여기선 id값만 세팅하는데 멤버의 이름은 고객이 회원가입할 때 이미 적혀있음
         // 시스템에 저장하기 위한 id값만 넣어주고 저장하면 됨
         member.setId(++sequence);
@@ -35,8 +35,12 @@ public class MemoryMemberRepository implements MemberRepository {
     }
 
     @Override
-    public List<Member> finaAll() {
+    public List<Member> findAll() {
         // 리스트에 store에 있는 Member객체들을 담아서 반환한다.
         return new ArrayList<>(store.values());
+    }
+
+    public void clearStore() {
+        store.clear();
     }
 }
