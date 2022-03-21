@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 // 서비스 클래스는 비즈니스에 가까운 용어를 사용해야 함 (서비스는 비즈니스에 의존적으로 설계)
-@Service
 public class MemberService {
 
     private final MemberRepository memberRepository;
