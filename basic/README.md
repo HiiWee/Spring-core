@@ -285,9 +285,21 @@ Study Spring basic
   * 이후 Member객체에 이름을 세팅하고 의존관계 주입을 받은 MemberService 객체에 `join` 한다.
 
 
+## [회원 웹 기능 - 조회]
+* 회원 목록을 클릭했을때 조회 동작을 만들어보자
+<br><br>
 
-
-
+* MemberController에 list 컨트롤러를 만든다. (@GetMapping("/members"))
+  * memberService에 저장되어있는 모든 회원들을 List타입으로 받아서 Model객체를 이용해 addAttribute한다.
+  * 이후 memberList.html로 전송한다.
+<br><br>
+* memberList.html 만들기
+  * Thymeleaf문법이 사용되는데 먼저 List에 담긴 객체를 EL태그로 받아오고 for Each문을 돌듯이   
+    각각의 Member 객체를 받는다.
+  * 이후 하나의 객체마다 id와 이름값을 EL태그를 이용해 줄력한다. 이 때 Spring은 getter를 이용해 값을 받아온다.
+<br><br>
+> 이렇게 만들어진 결과를 보면 먼저 회원의 정보가 메모리 리포지토리에 저장되어 있으므로 스프링을 재시작하면   
+> 모두 사라지게 된다. 따라서 데이터를 저장하기 위해 데이터베이스를 연동해야 할 필요성이 있다.
 
 
 

@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="container">
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--Thymeleaf 문법 loop를 돌며 모든 리스트안에 값들을 차례대로 꺼낸다. (forEach와 비슷)-->
+            <tr th:each="member : ${members}">
+                <!-- Member객체의 getter에 접근해서 값을 받아온다. -->
+                <td th:text="${member.id}"></td>
+                <td th:text="${member.name}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div> <!-- /container -->
+</body>
+</html>
