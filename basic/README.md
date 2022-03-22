@@ -263,6 +263,37 @@ Study Spring basic
     * 요청이 오면 먼저 스프링 컨테이너안에서 관련 컨트롤러를 찾고, 그 다음에 static파일을 찾으므로   
       / 주소가 매핑된 컨트롤러인 HomeController를 찾아서 반환하므로 정적 페이지는 보여주지 않는다.
 
+## [회원 웹 기능 - 등록]
+* url을 그냥 엔터로 치는것은 GET 방식이므로 @GetMapping에 연결됨
+  * 주로 데이터를 등록할때는 POST, 조회시에는 GET방식을 이용한다.
+<br><br>
+
+* createMemberForm.html을 추가한다.
+  * post 방식으로 /members/new라는 url로 결과를 보낸다.
+  * 이때 input태그에 사용자가 입력하고 등록한 값도 key : "name" value = 사용자 입력값 으로 같이 보낸다.
+  * `자바 빈 프로퍼티 규약`에 따라 name="name" 은 `setName`이라는 메소드를 찾게된다.
+<br><br>
+* `DTO 객체`인 `MemberForm`을 생성한다. 
+  * 실무에서는 컨트롤러에 넘어오는 정보가 Member가 필요한 데이터 이상으로 많은 데이터들이 들어온다.   
+    예를 들어서 회원 정보 뿐만 아니라 약관 정보도 들어오고, 화면을 처리하기 위한 추가 정보들도 들어온다.   
+    또는 Member에 필요한 정보들이 화면이 아니라 데이터베이스에 더 있을 수도 있기 때문에 `MemberForm과 Member를 분리`
+  * 스프링은 MemberForm에 name이라는 필드에 setName을 이용해   
+    name필드에 받아온 key : "name"의 `value값`을 저장한다.
+<br><br>
+* MemberController에서 값 받아서 회원 등록하기
+  * 회원명을 받아서 객체에 담았으니 인자로 MemberForm 객체를 받아와서 이름을 가져온다(`getName`)
+  * 이후 Member객체에 이름을 세팅하고 의존관계 주입을 받은 MemberService 객체에 `join` 한다.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
