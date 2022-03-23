@@ -329,20 +329,58 @@ Study Spring basic
   모아놓는다. --> git과 같이 버전관리를 할 때 파악하기 용이함
 
 
+## [순수 JDBC]
+* 애플리케이션과 DB를 연동해 기존처럼 메모리 저장이 아닌 DB에 데이터를 저장하고 꺼내는 고전 방식의   
+  JDBC를 이용해보자
+<br><br>
+* 자바는 기본적으로 DB와 붙기 위해선 JDBC 드라이버가 꼭 필요하다(이를 가지고 서로 연동함)
+  * 또 DB와 붙을때 데이터베이스가 제공하는 클라이언트도 같이 필요(com.h2database:h2)
+* 그리고 `application.properties`에 JDBC url, 드라이버 클래스, DB아이디를 설정해야함
+<br><br>
 
+**DataSource 이용하기**   
+* 위에서 설정한 application.properties정보를 가지고 `스프링 부트는 DataSource 객체를 생성`한다.   
+  DataSource는 데이터베이스 커넥션을 획득할 때 사용하는 객체다. 
+<br><br>
 
+**JdbcMemberRepository 생성**   
+* 고전의 방식으로 생성된 Jdbc 리포지토리
+* 여기서 특징이라면 `RETURN_GENERATED_KEYS`의 사용이다.
+  * id값은 DB가 자동생성해주는데 이 값을 알아야 멤버에 setId를 할 수 있다.
+  * 따라서 자동으로 생성되어진 id를 가져오는 쿼리를 추가한다. (con.prepareStatement(sql, 이곳에))
+  * 이후 pstmt.getGenerateKeys()로 RETURN_GENERATED_KEYS를 매칭해 `DB가 자동생성한 id값을 꺼내온다.`
 
+* Connetion을 이용해 연결을 생성할 때 스프링 프레임워크의 `DataSourceUtils`를 이용하자
+  * 이를통해 getConnection()을 하게되면 연결을 호출할 때마다 일일이 새로 생성하는 것이 아니라   
+    `동일한 DB Connection을 유지` 시켜준다.(**스프링 프레임워크 이용시 꼭 이렇게 사용하자**)
+  * `close`를 할때도 `DataSourceUtils.releaseConnection()`을 이용해 닫아준다. (**동일 DB 커넥션 유지 시켜줌**)
+<br><br>
 
+**JdbcMemberRepository를 통한 확장과 SpringConfig에서만 이뤄지는 변경**   
+* 스프링 부트는 데이터베이스 커넥션 정보를 바탕으로   
+  DataSource객체를 스프링 컨테이너가 미리 생성해 bean으로 관리하므로 @Autowired로 자동 DI 해준다.   
+  이후 기존의 MemoryMemberRepository를 JdbcMemberRepository로 변경만 해주면서 DI로 받은 DataSource도 넘겨준다.
+* 이렇게 되면 `어떤 코드도 변경하지 않고 JdbcMemberRepository라는 클래스를 만들고(인터페이스를 구현해 확장)   
+  스프링이 제공하는 설정 파일만 변경하여 저장소를 변경할 수 있다.`
+<br><br>
 
+**스프링을 왜 쓸까?**   
+* 위와 같은 상황에서 소위 `다형성`을 활용할 수 있으므로(인터페이스를 두고 구현체를 바꿔끼기 할 수 있음)
+* 스프링은 이런 상황에서 편리하게 할 수 있도록 스프링 컨테이너가 지원해줌(`Dependency Injection`)
+  > 스프링을 사용하지 않는다면 Service 단에서의 코드 변경이 이루어져야 하지만, 스프링을 이용하면서 부터는   
+    기존에 코드는 하나도 손대지 않고 오직 `애플리케이션을 설정하는 코드`(어셈블리)만 변경하면   
+    실제 애플리케이션에 관련된 코드는 하나도 `변경 할 필요가 없고` 이를 굉장히 편리하게 쓸수있게 해주는것이   
+    `스프링의 큰 장점`이다.
 
-
-
-
-
-
-
-
-
+<br><br>
+**[정리]**   
+* 개방-폐쇄 원칙(OCP, Open-Closed Principle)을 지킨다
+  * 확장에는 열려있고, 수정, 변경에는 닫혀있다.   
+  (객체지향에서 말하는 다형성 개념을 잘 활용하면 기능을 완전히 변경해도 애플리케이션 전체를 수정 할 필요가 없다.)
+* 스프링의 DI(Dependency Injection)을 사용하면 **기존 코드를 전혀 손대지 않고, 설정만으로 구체클래스를 변경** 할 수 있다.
+* 회원을 등록하고 DB에 결과가 잘 입력되는지 확인하자.
+* 데이터를 DB에 저장하므로 스프링 서버를 다시 실행해도 데이터가 안전하게 저장됨
+* 객체지향의 진짜 매력은 인터페이스에서 구현체를 바꾸면서도 기존코드를 변경하지 않고 바꿀 수 있는것!!
 
 
 
