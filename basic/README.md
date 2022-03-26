@@ -408,8 +408,15 @@ Study Spring basic
   * 스프링 컨테이너를 어쩔 수 없이 올려야 하는 상황이면 테스트 설계가 잘못됐을 확률이 높다.
 
 
+## [스프링 JdbcTemplate]
+* 순수 Jdbc와 동일한 환경설정을 하면 됨
+* 스프링 JdbcTemplate과 MyBatis 같은 라이브러리는 JDBC API에서 본 반복 코드를 대부분 제거해준다.   
+  하지만 SQL은 직접 작성해야 한다.
 
+* JdbcTemplate은 템플릿 메소드 패턴을 내부에서 많이 이용함
 
+* `rowMapper`
+  * 쿼리를 실행 후 객체에 담아 보낼때 객체 생성에 대한 부분을 담당한다.
 
 
 
