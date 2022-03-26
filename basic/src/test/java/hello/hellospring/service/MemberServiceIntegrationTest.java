@@ -88,7 +88,7 @@ class MemberServiceIntegrationTest {
         Member result = memberService.findOne(member.getId()).get();
 
         // then
-        assertThat(member).isEqualTo(result);
+        assertThat(member.getId()).isEqualTo(result.getId());
 
     }
 }
