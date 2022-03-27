@@ -12,7 +12,7 @@ import java.util.Optional;
 public class JdbcMemberRepository implements MemberRepository {
     private final DataSource dataSource;
 
-    public JdbcMemberRepository(DataSource dataSource) {
+    public  JdbcMemberRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

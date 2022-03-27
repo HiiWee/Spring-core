@@ -420,12 +420,51 @@ Study Spring basic
 
 
 
+# [JPA]
+* 이전에 JdbcTemplate은 jdbc에 비해 반복적인 코드가 많이 줄어듬, 하지만 SQL은 개발자가 결국 직접 작성해야한다.
+* JPA를 사용하면 SQL 쿼리도 JPA가 자동으로 처리를 해주며 개발 생산성을 크게 높여준다.
+<br><br>
+* JPA는 기존의 반복 코드는 물론이고, 기본적인 SQL도 JPA가 직접 만들어서 실행해준다.
+* JPA를 사용하면, SQL과 데이터 중심의 설계에서 객체 중심의 설계로 패러다임 전환을 할 수 있다.
+* JPA를 사용하면 개발 생산성을 크게 높일 수 있다.
+<br><br>
 
+**스프링 부트에 JPA 설정 추가**
+* 관련 라이브러리는 implementation 'org.springframework.boot:spring-boot-starter-data-jpa'를 추가해준다.
+* 이후 application.properties에서 아래 2개의 설정을 추가한다.   
+  `spring.jpa.show-sql=true` : JPA가 생성하는 SQL을 출력하게 함   
+  `spring.jpa.hibernate.ddl-auto=none` : JPA는 테이블을 자동으로 생성하는 기능을 제공한다. none은 해당기능 끔   
+  create를 사용하면 엔티티정보를 바탕으로 테이블도 직접 생성해줌
+<br><br>
 
+**JPA 사용하기 : Entity mapping**   
+* 먼저 Member 엔티티에 매핑을 해줘야 한다. (ORM) : `@Entity`
+  * Member의 id는 pk이고, pk를 db에서 값을 생성하는 것을 `아이덴티티 전략`이라 한다.
+    * `@Id` `@GeneratedValue(strategy = GenerationType.IDENTITY)`
 
+<br><br>
+**JPA 사용하기 : 리포지토리**   
+* JPA는 `EntityManager`라는 것으로 모든것이 동작한다.
+* data-jpa라이브러리를 받으면(build.gradle) 스프링 부트가 자동으로 EntityManager를 생성해준다.
+* 만들면서 현재 데이터베이스와 연결도 하고 앞서 application.properties에서 설정한 정보까지 이용해 EntityManager가 생성된다.
+* 또한 DataSource같은 부분도 `내부적`으로 들고있으므로 DB통신 부분은 내부적으로 처리해준다.
+* 따라서 만든것을 Injection받으면 된다.
+* 기본적으로 저장 조회 업데이트 삭제 같이 pk 기반의 것들은 sql을 작성할 필요없음 : **자동생성됨**
+* pk기반이 아닌 findByName, findAll같은 경우는 `JPQL`을 작성해줘야한다.
 
+<br><br>
+**JPA 사용하기 : 서비스 계층**   
+* JPA를 쓰려면 항상 주의해야 할 것이 서비스 계층에 `@Transactional`이 필요하다.
+  * `org.springframework.transaction.annotation.Transactional` 를 사용하자.
+* 서비스 계층 전부 필요하진 않고, 데이터를 저장, 변경하는 부분에만 적용해도 된다.
+* 예를들어 join을 보면 JPA는 join시 모든 데이터 변경이 트랜잭션 안에서 실행되야 하므로 어노테이션을 붙여준다.
+* 스프링은 해당 클래스의 메서드를 실행할 때 트랜잭션을 시작하고, 메서드가 정상 종료되면 트랜잭션을 커밋한다.   
+  만약 런타임 예외가 발생하면 롤백한다.
+* **JPA를 통한 모든 데이터 변경은 트랜잭션 안에서 실행해야 한다.(추가, 변경 등)**
 
-
+<br><br>
+> JPA기술을 스프링에서 한번 감싸서 제공하는 기술이 있다. : 스프링 데이터 JPA    
+> 이것을 이용하면 기존에 JPQL을 짠 findByName, findAll도 JPQL을 작성하지 않아도된다.   
 
 
 
