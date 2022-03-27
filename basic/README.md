@@ -518,7 +518,25 @@ JPA가 제공하는 네이티브 쿼리를 사용하거나 JdbcTemplate을 이�
 
 
 
+# [AOP 적용]
+* AOP: Aspect Oriented Programming
+* 공통 관심 사항(cross-cutting concern) vs 핵심 관심 사항(core concern) 분리
+* 즉 시간 측정 로직을 한군데 모아놓고 원하는 곳에 공통 관심 사항을 적용하면 된다.
 
+<br><br>
+**TimeTraceAop**
+* 클래스에 @Aspect를 붙여야함
+* @Around로 어느곳에 적용할지 범위를 정하고, 수동 빈 등록일경우 Config파일도 등록하게 되면   
+  순환참조 오류가 발생하므로 설정 파일은 제외한다.
+* 호출이 될때마다 joinPoint를 이용해 조작할 수 있고, 중간에 인터셉트해 풀 수 있는 기술이 AOP가 된다.
+* 따라서 핵심 관심 사항과 공통 관심 사항을 분리하여 깔끔하게 유지하고 변경이 필요해도 하나만 변경하면 된다.
 
-
-
+<br><br>
+**AOP 원리**
+* 스프링은 AOP가 있으면 가짜 memberService를 생성한다(`프록시`)
+* 그리고 스프링 컨테이너는 빈을 등록할때 `가짜 스프링 빈`을 앞에 세운다.
+* 따라서 HelloController가 호출하는것은 프록시로 만들어진 가짜 memberService를 호출한다.
+* 실제 MemberController에서 memberService가 인젝션 되는 생성자에서 getClass()를 하면 확인할 수 있다.
+  * MemberService$$CGLIB : 기존의 MemberService를 복제해서 코드를 조작하는 기술
+* AOP가 다 실행하고 joinPoint.proceed()시 진짜 memberService가 호출된다.
+* memberService 주입시 `DI`를 사용함으로써 AOP가 가능하다. (현재 방식은 프록시 방식의 AOP)
