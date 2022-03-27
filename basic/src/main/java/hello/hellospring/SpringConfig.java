@@ -9,33 +9,27 @@ import org.springframework.context.annotation.Configuration;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
-// DataSource는 스프링이 생성해주므로 자동 DI 해주고, 기존의 MemoryMemberRepository를
-// JdbcMemberRepository로 변경만 해주면서 dataSource를 넘겨준다.
-
-// 어떤 코드도 변경하지 않고, JdbcMemberRepository라는 클래스를만들고(인터페이스를 구현해 확장)
-// 스프링이 제공하는 설정파일만 변경하였다.
-
 @Configuration
 public class SpringConfig {
 
-    private EntityManager em;
+    // 스프링 데이터 JPA가 만든 SpringDataJpaMemberRepository 구현체가 등록이 된다.
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    public SpringConfig(EntityManager em) {
-        this.em = em;
+    public SpringConfig(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
     @Bean
     public MemberService memberService() {
-        return new MemberService(memberRepository());
+        return new MemberService(memberRepository);
     }
 
-    @Bean
-    public MemberRepository memberRepository() {
+//    @Bean
+//    public MemberRepository memberRepository() {
 //        return new MemoryMemberRepository();
 //        return new JdbcMemberRepository(dataSource);
 //        return new JdbcTemplateMemberRepository(dataSource);
-        return new JpaMemberRepository(em);
-    }
+//        return new JpaMemberRepository(em);
+//    }
 
 }

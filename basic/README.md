@@ -468,13 +468,32 @@ Study Spring basic
 
 
 
+## [스프링 데이터 JPA]
+* 스프링 부트, JPA 만으로도 생산성이 증가되고 코드도 줄지만,   
+  스프링 데이터 JPA를 사용하면, 기존의 한계를 넘어 구현 클래스 없이 인터페이스 만으로 개발을 완료할 수 있다.   
+  또한 기본 CRUD기능도 스프링 데이터 JPA가 제공해준다.
+  > 스프링 데이터 JPA는 JPA를 편리하게 사용하도록 도와주는 기술, 따라서 JPA를 먼저 학습한 후에 학습하는걸 권장
 
+<br><br>
+**SpringDataJpaMemberRepository 인터페이스**
+* org.springframework.data.jpa.repository.JpaRepository와 구현하려는 저장소인 MemberRepository를 상속받음
+* 인터페이스로 만들어놓고 JpaRepository를 상속받으면 스프링 데이터 JPA가 SpringDataJpaMemberRepository의 구현체를   
+  자동으로 만들고, 스프링 빈에 등록한다. 우리는 그걸 주입받아 사용하면 됨
 
-
-
-
-
-
+<br><br>
+**스프링 데이터 JPA 제공 기능**
+* 인터페이스를 통한 기본적인 CRUD
+  * 우리가 만든 save, findById, findAll과 같은 공통적인 비즈니스 로직들은 이미 JpaRepository에 공통 기능으로   
+    구현되어 있다.
+  * 하지만 findByName같은 특정 비즈니스에서만 사용되는 로직들은 공통으로 묶을 수 없으므로 사용자가 직접   
+    추가해 주어야 한다.
+    > 이때 메소드 이름 만으로도 조회 기능을 제공 해준다. (ex findByXxx, findByXxxAndYyy과 같은 형식만 맞추면됨)
+  * 페이징 기능 자동 제공
+  
+<br><br>
+> **참고:** 실무에서는 JPA와 스프링 데이터 JPA를 기본으로 사용함, 복잡한 동적 쿼리는 Querydsl 라이브러리를 사용함   
+Querydsl은 쿼리도 자바 코드로 안전하게 작성할 수 있고, 동적 쿼리도 작성할 수 있다. 이렇게 해도 해결하기 어렵다면   
+JPA가 제공하는 네이티브 쿼리를 사용하거나 JdbcTemplate을 이용하면 됨
 
 
 
