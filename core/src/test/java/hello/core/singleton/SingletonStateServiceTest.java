@@ -37,7 +37,7 @@ class SingletonStateServiceTest {
         // ThreadA : A사용자 10000원 주문
         int userAPrice = statelessService1.order("userA", 10000);
         // ThreadB : B사용자 20000원 주문
-        int userBPrice = statelessService2.order("userA", 20000);
+        int userBPrice = statelessService2.order("userB", 20000);
 
         // ThreadA : A사용자 주문 금액 조회 -> 공유 필드를 사용하지 않으므로 10000원 정삭 출력됨
         System.out.println("userAPrice = " + userAPrice);
